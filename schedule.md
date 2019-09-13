@@ -8,6 +8,6 @@ The workshop commences on the 20th of September from 1300. The instrutions and t
 
 ##### Monday 2019-09-20
 
-###### Basics in R
+<span style="color:blue"> Basics in R </span>
 
 **1300 to 1500** Materials and exercises will be uploaded here
