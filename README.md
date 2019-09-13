@@ -1,5 +1,5 @@
-# Omics Integration and Systems Biology 
-2019-09-09 to 2019-09-12
-SciLifeLab, Tomtebodavagen 23A, 171 65 Stocholm
+# Workshop on Bioinformatics
 
-[Course homepage](https://nbisweden.github.io/workshop_omics_integration/).
+This is the GitHub page for the workshop on Bioinformatics that is being held at the [Department of Immunotechnology][1]. This workshop is organised mainly by the PhD students at this department.
+
+The main aim of this workshop is the transfer of Bioinformatics knowledge among the people here at the department. We use this forum to enhance the knowledge transfer with  main fous on Bioinformatics.
