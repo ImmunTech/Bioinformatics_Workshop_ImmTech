@@ -1,6 +1,6 @@
 ---
 layout: default
-title: Binformatics Worshop at Immunotechnology Department at LTH
+title: Workshop on Bioinformatics
 ---
 
 #### Binformatics Worshop
