@@ -3,7 +3,7 @@ layout: default
 title: Workshop on Bioinformatics
 ---
 
-#### Binformatics Worshop
+#### Binformatics Workshop
 
 **Overview**
 
