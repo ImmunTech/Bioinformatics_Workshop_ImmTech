@@ -14,6 +14,8 @@ The workshop commences on the 20th of September from 1300. The instrutions and t
 
 If you want to use the R markdown files of the lectures and exercises, you can download it here: [Lecture in Rmarkdown file][3], [Exercises in Rmarkdown file][4]
 
+*All the topics below are preliminary*
+
 ##### Friday 2019-10-11
 
 <span style="color:red"> Basic Statistical concepts and tools for application **Bioforum**</span>
