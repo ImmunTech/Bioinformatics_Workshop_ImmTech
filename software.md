@@ -5,4 +5,10 @@ title:  Software
 
 #### Softwares
 
-* This page will eventually be populated with the different tools and softwares from each of the session will be linked here.
+**From Monday 2019-09-20**
+
+1. [Rstudio][1]
+2. [tidyverse][2]
+
+[1]: https://www.rstudio.com/products/rstudio/download/
+[2]: https://www.tidyverse.org/packages/
