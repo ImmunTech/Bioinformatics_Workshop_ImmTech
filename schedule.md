@@ -10,8 +10,12 @@ The workshop commences on the 20th of September from 1300. The instrutions and t
 
 <span style="color:red"> Basics in R at **Bioforum**</span>
 
-<span style="color:blue"> **1300 to 1500:**</span> [Lecture][1], [Exercises][2]
+<span style="color:blue"> **1300 to 1500:**</span> You can follow the lecture and exercises in html files here: [Lecture][1], [Exercises][2]
+
+If you want to use the R markdown files of the lectures and exercises, you can download it here: [Lecture in Rmarkdown file][3], [Exercises in Rmarkdown file][4]
 
 
 [1]: Data/2019-09-20/Introduction_workshop/Introduction_xaringan.html
 [2]: Data/2019-09-20/Introduction_workshop/Exercises.html
+[3]: Data/2019-09-20/Introduction_workshop/Introduction_xaringan.Rmd
+[3]: Data/2019-09-20/Introduction_workshop/Exercises.Rmd
