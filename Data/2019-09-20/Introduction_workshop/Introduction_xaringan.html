@@ -1,0 +1,1157 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+  <head>
+    <title>Introduction</title>
+    <meta charset="utf-8" />
+    <meta name="author" content="Sergio Mosquim Junior" />
+    <script src="libs/htmlwidgets-1.3/htmlwidgets.js"></script>
+    <link href="libs/str_view-0.1.0/str_view.css" rel="stylesheet" />
+    <script src="libs/str_view-binding-1.4.0/str_view.js"></script>
+    <link rel="stylesheet" href="xaringan-themer.css" type="text/css" />
+  </head>
+  <body>
+    <textarea id="source">
+class: center, middle, inverse, title-slide
+
+# Introduction
+### Sergio Mosquim Junior
+### 9/4/2019
+
+---
+
+
+
+
+
+# Prerequisites
++ R [here](https://cran.r-project.org)
++ R Studio [here](https://www.rstudio.com/products/rstudio/#Desktop)
++ packages: tidyverse, forcats, stringr, readr, purrr (should be loaded with tidyverse)
+
+---
+# Overview
+1. Rmarkdown
+2. Tidyverse
+3. Data Structures
+4. Data manipulation
+
+---
+class: center, middle
+
+# Rmarkdown
+
+---
+# Why?
++ Save and execute code
++ Generate reports which can easily shared
++ Support for different documents (notebooks, presentations, books, scientific articles, etc.)
++ Code and text in the same document
+
+---
+class: center, middle
+# How?
+![](rmarkdown1.png)&lt;!-- --&gt;
+
+---
+class: middle
+![](rmarkdown2.png)&lt;!-- --&gt;
++ Read more [here](https://bookdown.org/yihui/rmarkdown/)
++ Let me know if interested in a workshop on RMarkdown
+---
+class: center, middle
+# Tidyverse
+---
+# What is?
++ Collection of packages for data science
++ They share a common language
++ Made to work well together
+---
+class: center, middle
+&lt;div class="figure" style="text-align: center"&gt;
+&lt;img src="tidyverse.png" alt="Tidyverse pipeline"  /&gt;
+&lt;p class="caption"&gt;Tidyverse pipeline&lt;/p&gt;
+&lt;/div&gt;
+---
+# Tidy Data
++ Three rules:
+  1. Each variable must have its own column
+  2. Each observation must have its own row
+  3. Each value must have its own cell
+---
+class: center, middle, inverse
+
+# Data Structures
+---
+# Vectors
++ Two types of vectors
+  1. Atomic Vectors
+      + logical
+      + numeric (double + integer)
+      + character
+      + complex
+      + raw
+  2. Lists
+  3. Augmented vectors
+      + Factors
+      + Dates
+      + Date-times
+      + Tibbles
+---
+class: middle, center
+
+# Atomic Vectors
+---
+# Logical Vectors
++ Three values
+  + FALSE
+  + TRUE
+  + NA
+
+## Example:
+
+```r
+1:10 %% 3 == 0
+```
+
+```
+##  [1] FALSE FALSE  TRUE FALSE FALSE  TRUE FALSE FALSE  TRUE FALSE
+```
+???
+They're usually constructed by making different comparisons
+---
+# Numeric Vectors
++ Include both integer and double vectors
++ Default is double
+
+## Example:
+
+```r
+sqrt(2)**2 == 2
+```
+
+```
+## [1] FALSE
+```
+
+```r
+as.integer(sqrt(2)**2)==2
+```
+
+```
+## [1] TRUE
+```
+???
+It's important to note that double is an approximation of a float point number, so you may run into issues when running operations such as, for example:
+---
+# Character Vectors
++ Complex
+
+## Example
+
+```r
+x &lt;- "This is a reasonably long string."
+pryr::object_size(x)
+```
+
+```
+## 152 B
+```
+
+```r
+y &lt;- rep(x, 1000)
+pryr::object_size(y)
+```
+
+```
+## 8.14 kB
+```
+???
+It is considered the most complex because each element is a string, ans strings can contain an arbitrary amount of data
+
+This is to show that y doesn't take as much space as 1000 times x, even though it is supposed to be just 1000 times the same string
+---
+class: center, middle
+
+# Using atomic vectors
+---
+# Converting between types
+
+```r
+x &lt;- 1
+str(x)
+```
+
+```
+##  num 1
+```
+
+```r
+# Numeric
+str(as.integer(x))
+```
+
+```
+##  int 1
+```
+
+```r
+# Character
+str(as.character(x))
+```
+
+```
+##  chr "1"
+```
+
+```r
+# Logical
+str(as.logical(x))
+```
+
+```
+##  logi TRUE
+```
+---
+# Getting vector type
++ There are a couple of functions one can use in this case. Example:
+
+```r
+typeof(x)
+```
+
+```
+## [1] "double"
+```
+
+```r
+is_atomic(x)
+```
+
+```
+## [1] TRUE
+```
+
+```r
+is_double(x)
+```
+
+```
+## [1] TRUE
+```
+
+```r
+is_logical(x)
+```
+
+```
+## [1] FALSE
+```
+---
+# Rename
++ Example:
+
+```r
+x &lt;- c(a=1, b=2, c=3)
+x
+```
+
+```
+## a b c 
+## 1 2 3
+```
+
+```r
+set_names(x,c('x','y','z'))
+```
+
+```
+## x y z 
+## 1 2 3
+```
+---
+# Get elements of interest
++ Use single '[' for that
++ Example:
+
+```r
+x[1]
+```
+
+```
+## a 
+## 1
+```
+
+```r
+x[2]
+```
+
+```
+## b 
+## 2
+```
+---
+# Vector recycling
++ Some operations recycle vectors if they're of different sizes, for example:
+
+```r
+data.frame(x=1:4,y=1:2)
+##   x y
+## 1 1 1
+## 2 2 2
+## 3 3 1
+## 4 4 2
+```
+
++ However, tidyverse prevents this from happening to anything which is not a scalar
+
+```r
+tibble(x=1:4,y=rep(1:2,2))
+## # A tibble: 4 x 2
+##       x     y
+##   &lt;int&gt; &lt;int&gt;
+## 1     1     1
+## 2     2     2
+## 3     3     1
+## 4     4     2
+```
+???
+Vector recycling is the reason why operations such as  1:10+100 work.
+However, that is not the case for tidyverse functions. Instead, you have to write as rep() in order to have that vector repeated.
+---
+class: center, middle
+
+# Lists
+---
+# Lists
++ Also called recursive vectors (can store multiple lists)
++ Created by using **list()**
+
+???
+Lists are also called recursive vectors for the simple reason that they may store multiple lists. Moreover, lists are heterogenous, in the sense that different types of data can be stored within lists, while for vectors only one type of data can be used. They can be created using the command list()
+---
+# Useful commands
++ **str()**: shows the structure of a list without focusing on the contents
+
+
+```r
+str(example_list)
+```
+
+```
+## List of 3
+##  $ x: int [1:4] 1 2 3 4
+##  $ y: chr [1:26] "a" "b" "c" "d" ...
+##  $ z: logi TRUE
+```
+
++ '[' to extract sublists
+
+```r
+str(example_list[2])
+```
+
+```
+## List of 1
+##  $ y: chr [1:26] "a" "b" "c" "d" ...
+```
+---
++ '[[' to extract a single component from a list
++ Can also reference by name by using '$'
+
+```r
+str(example_list[[2]])
+```
+
+```
+##  chr [1:26] "a" "b" "c" "d" "e" "f" "g" "h" "i" "j" "k" "l" "m" "n" ...
+```
+
+```r
+str(example_list$y)
+```
+
+```
+##  chr [1:26] "a" "b" "c" "d" "e" "f" "g" "h" "i" "j" "k" "l" "m" "n" ...
+```
+
+```r
+example_list[[2]][1]
+```
+
+```
+## [1] "a"
+```
+---
+class: center, middle
+
+# Augmented Vectors
+---
+# Augmented Vectors
++ Vectors + metadata
+???
+Every vector has basically two important properties, type and length, which can be determined by typeof() and length().
+There are vectors, however, which have additional data, and these are known as augmented vectors. They can be of three different types, including factors, date and date-time, and data frames or tibbles. Factors are built on top of integers, dates and date-time are built on top of numeric vectors and data frames and tibbles are built on top of lists.
+---
+# Factors
++ Represent categorical data
++ Example:
+
+```r
+example_factor &lt;- factor(c('ab','cd','ab'),levels = c('ab','cd','ef'))
+example_factor
+```
+
+```
+## [1] ab cd ab
+## Levels: ab cd ef
+```
+???
+Factors are designed to represent categorical data, or data that can only take certain values. As i said previously, they're built on top of integers, and have an additional levels attribute
+---
+# Dates
++ Numeric vectors
++ Example:
+
+```r
+example_date &lt;- as.Date('1971-01-01')
+unclass(example_date)
+```
+
+```
+## [1] 365
+```
+???
+In R, they are numeric vectors which represent the number of days since 1 January 1970.
+---
+# Date-time
++ Also numeric vectors
++ *lubridate* package
++ You also have a *tzone* attribute which you can choose depending on where you are
++ Example:
+
+```r
+example_datetime &lt;- ymd_hm('1970-01-01 01:00')
+unclass(example_datetime)
+```
+
+```
+## [1] 3600
+## attr(,"tzone")
+## [1] "UTC"
+```
+???
+Similar to dates, but they represent the number of seconds since 1 January 1970. A good package to work with this kind of data is the lubridate package.
+One important thing to know if that dates prior to 1 January 1970 will be represented as negative numbers
+---
+# Tibbles
++ Based on lists
++ Example
+
+```r
+nycflights13::flights
+```
+
+```
+## # A tibble: 336,776 x 19
+##     year month   day dep_time sched_dep_time dep_delay arr_time
+##    &lt;int&gt; &lt;int&gt; &lt;int&gt;    &lt;int&gt;          &lt;int&gt;     &lt;dbl&gt;    &lt;int&gt;
+##  1  2013     1     1      517            515         2      830
+##  2  2013     1     1      533            529         4      850
+##  3  2013     1     1      542            540         2      923
+##  4  2013     1     1      544            545        -1     1004
+##  5  2013     1     1      554            600        -6      812
+##  6  2013     1     1      554            558        -4      740
+##  7  2013     1     1      555            600        -5      913
+##  8  2013     1     1      557            600        -3      709
+##  9  2013     1     1      557            600        -3      838
+## 10  2013     1     1      558            600        -2      753
+## # … with 336,766 more rows, and 12 more variables: sched_arr_time &lt;int&gt;,
+## #   arr_delay &lt;dbl&gt;, carrier &lt;chr&gt;, flight &lt;int&gt;, tailnum &lt;chr&gt;,
+## #   origin &lt;chr&gt;, dest &lt;chr&gt;, air_time &lt;dbl&gt;, distance &lt;dbl&gt;, hour &lt;dbl&gt;,
+## #   minute &lt;dbl&gt;, time_hour &lt;dttm&gt;
+```
+???
+Tibbles are augmented lists. They have class 'tbl_df' + 'tbl' + 'data.frame' and names and row.names attributes. The nice thing about tibble is the way they're printed when compared to data frames. They show the variable names, the type of each variable, which is helpful to visualise when importing data, and it automatically prints rows and columns compatible with the screen size you're using, which makes it easier to visualize.
+---
+class: inverse, center, middle
+
+# Strings
+---
+# Strings
++ **Stringr** package
++ Created by using ' or " 
++ Special characters added by using '\'
++ Helpful characters:
+  + '\\t' for tab
+  + '\\n' newline
+  + run ?" ' " for more
+
+???
+There are different functions that work with strings in base R, but they can be inconsistent. Therefore, we're using the stringr package.
+---
+# Useful functions
++ **str_length()** tells you the number of characters in a string
++ **str_c()** to combine strings
++ **str_replace()** to replace patterns
++ **str_sub()** extracts parts of a string giving start and end positions
++ **str_to_lower()** or **str_to_upper()** to convert to upper or lower case. Can take language in the *locale* argument
+  + Language code based on ISO 639
++ **str_order()** and **str_sort()** to sort strings (also take *locale* argument)
+---
+
+# Examples
+
+```r
+example_string &lt;- c('Apple','Banana','Pear')
+str_length(example_string)
+## [1] 5 6 4
+```
+
+```r
+str_c(example_string,collapse = ' ')
+## [1] "Apple Banana Pear"
+```
+
+```r
+str_c('Apple','Banana',sep = ', ')
+## [1] "Apple, Banana"
+```
+
+```r
+str_sort(example_string,decreasing = TRUE,locale = 'en')
+## [1] "Pear"   "Banana" "Apple"
+```
+
+```r
+str_sub(example_string,1,-2)
+## [1] "Appl"  "Banan" "Pea"
+```
+
+```r
+str_to_upper(example_string,locale = 'en')
+## [1] "APPLE"  "BANANA" "PEAR"
+```
+---
+# Matching patterns with regular expressions
++ Use regular expresions
++ Check [this](http://www.rexegg.com/regex-quickstart.html#ref) website for regular expressions
+
+## Examples:
+
+```r
+str_view_all(example_string,pattern = '[aeiou]')
+```
+
+<div id="htmlwidget-6d465267fa790c190831" style="width:960px;height:100%;" class="str_view html-widget"></div>
+<script type="application/json" data-for="htmlwidget-6d465267fa790c190831">{"x":{"html":"<ul>\n  <li>Appl<span class='match'>e<\/span><\/li>\n  <li>B<span class='match'>a<\/span>n<span class='match'>a<\/span>n<span class='match'>a<\/span><\/li>\n  <li>P<span class='match'>e<\/span><span class='match'>a<\/span>r<\/li>\n<\/ul>"},"evals":[],"jsHooks":[]}</script>
+
+```r
+str_detect(example_string,pattern = '^[aeiouAEIOU]')
+## [1]  TRUE FALSE FALSE
+```
+---
+class: inverse, center, middle
+
+# Data Import
+---
+# Data Import
++ For this we're again using the tidyverse, namely a package called readr
++ Most functions in the package focus on turning flat files in data frames
+
+## Functions
++ **read_csv()** reads comma delimited files
++ **read_csv2()** reads semicolon separated files
++ **read_tsv()** reads tab separated files
++ **read_delim()** reads files with any delimiters
+
+## Attributes
++ Use *skip=n* to skip the first *n* lines
++ Use *comment= '#'* to drop all lines which start with for example #
++ *col_names* uses the first ine as headings
++ *na* lets you specify how to treat missing values in your data
+---
+# Parsing data
++ **parse_()** functions take a vector and return a more specified vector
++ Example:
+
+```r
+str(parse_logical(c("TRUE", "FALSE", "NA")))
+```
+
+```
+##  logi [1:3] TRUE FALSE NA
+```
+
+```r
+str(parse_date(c("2010-01-01", "1979-10-14")))
+```
+
+```
+##  Date[1:2], format: "2010-01-01" "1979-10-14"
+```
+---
++ If parsing fails, you get a warning, and features will be missing from output
++ Parsing numbers:
+  + numbers are written differently in differnt parts of the world
+  + numbers can be surrounded by other characters '$', '£'
+  + numbers may contain grouping characters ','
+  + use *locale* attribute
+
+```r
+parse_double("1,23", locale = locale(decimal_mark = ","))
+## [1] 1.23
+parse_double("1.23", locale = locale(decimal_mark = "."))
+## [1] 1.23
+parse_double("1,23")
+## Warning: 1 parsing failure.
+## row col               expected actual
+##   1  -- no trailing characters    ,23
+## [1] NA
+## attr(,"problems")
+## # A tibble: 1 x 4
+##     row   col expected               actual
+##   &lt;int&gt; &lt;int&gt; &lt;chr&gt;                  &lt;chr&gt; 
+## 1     1    NA no trailing characters ,23
+```
+---
+
+```r
+# Used in America
+parse_number("$123,456,789")
+```
+
+```
+## [1] 123456789
+```
+
+```r
+# Used in many parts of Europe
+parse_number("123.456.789", locale = locale(grouping_mark = "."))
+```
+
+```
+## [1] 123456789
+```
+
+```r
+# Used in Switzerland
+parse_number("123'456'789", locale = locale(grouping_mark = "'"))
+```
+
+```
+## [1] 123456789
+```
+---
+# Parsing strings
++ Characters depend on encoding
+  + English is well represented in ASCII
+  + Readr uses UTF-8
+    + understands every possible character 
+    + may cause problems with older systems that do not understand UTF-8
+---
+
+# Parsing factors
++ Give **parse_vector()** a *levels* attribute to give back a warning whenever an unexpected value is present
++ Example:
+
+```r
+fruit &lt;- c("apple", "banana")
+parse_factor(c("apple", "banana", "bananana"), levels = fruit)
+```
+
+```
+## Warning: 1 parsing failure.
+## row col           expected   actual
+##   3  -- value in level set bananana
+```
+
+```
+## [1] apple  banana &lt;NA&gt;  
+## attr(,"problems")
+## # A tibble: 1 x 4
+##     row   col expected           actual  
+##   &lt;int&gt; &lt;int&gt; &lt;chr&gt;              &lt;chr&gt;   
+## 1     3    NA value in level set bananana
+## Levels: apple banana
+```
+---
+# Parsing Problems
++ **readr** guesses the parsing using the first 1000 rows
+  + Might have issues after the first 1000 rows
+  + First rows might contain several missing values
++ Solution:
+  + set *col_types* attribute in read_ function
+  + for every *parse_* there's a *col_* option
+???
+Basically, you can set the columns manually, increase the number of rows the guess is made on or have everything as strings which then you can fix. Have a look at rio package, which is a swiss army knife for data
+---
+
+# Example:
+
+```r
+challenge &lt;- read_csv(readr_example('challenge.csv'))
+## Parsed with column specification:
+## cols(
+##   x = col_double(),
+##   y = col_logical()
+## )
+## Warning: 1000 parsing failures.
+##  row col           expected     actual                                                                                         file
+## 1001   y 1/0/T/F/TRUE/FALSE 2015-01-16 '/Library/Frameworks/R.framework/Versions/3.6/Resources/library/readr/extdata/challenge.csv'
+## 1002   y 1/0/T/F/TRUE/FALSE 2018-05-18 '/Library/Frameworks/R.framework/Versions/3.6/Resources/library/readr/extdata/challenge.csv'
+## 1003   y 1/0/T/F/TRUE/FALSE 2015-09-05 '/Library/Frameworks/R.framework/Versions/3.6/Resources/library/readr/extdata/challenge.csv'
+## 1004   y 1/0/T/F/TRUE/FALSE 2012-11-28 '/Library/Frameworks/R.framework/Versions/3.6/Resources/library/readr/extdata/challenge.csv'
+## 1005   y 1/0/T/F/TRUE/FALSE 2020-01-13 '/Library/Frameworks/R.framework/Versions/3.6/Resources/library/readr/extdata/challenge.csv'
+## .... ... .................. .......... ............................................................................................
+## See problems(...) for more details.
+tail(challenge)
+## # A tibble: 6 x 2
+##       x y    
+##   &lt;dbl&gt; &lt;lgl&gt;
+## 1 0.805 NA   
+## 2 0.164 NA   
+## 3 0.472 NA   
+## 4 0.718 NA   
+## 5 0.270 NA   
+## 6 0.608 NA
+```
+---
+
+
+```r
+challenge &lt;- read_csv(readr_example('challenge.csv'),col_types = cols(x=col_double(),y=col_date()))
+tail(challenge)
+## # A tibble: 6 x 2
+##       x y         
+##   &lt;dbl&gt; &lt;date&gt;    
+## 1 0.805 2019-11-21
+## 2 0.164 2018-03-29
+## 3 0.472 2014-08-04
+## 4 0.718 2015-08-16
+## 5 0.270 2020-02-04
+## 6 0.608 2019-01-06
+```
+---
+class: inverse, middle, center
+
+# Data Manipulation
+---
+# Overview
++ Syntax
++ *Dplyr* package
++ *Magrittr* package
++ Examples
+---
+# Syntax
++ In tidyverse, verbs work in a similar way
+  1. Data frame
+  2. Arguments on what to do with it
+  3. resulst in a new data frame
+
+---
+# *Dplyr* package
++ Pick observations by values
++ Reorder rows
++ Pick variables by names
++ Create new variables
++ Summary of values
+---
+# Pick observations by values
++ use verb **filter()**
+  + used to filter rows
++ Example (*nycflights13* package):
+
+
+```r
+# select flights on the 1st of January
+filter(flights,month==1,day==1)
+## # A tibble: 842 x 19
+##     year month   day dep_time sched_dep_time dep_delay arr_time
+##    &lt;int&gt; &lt;int&gt; &lt;int&gt;    &lt;int&gt;          &lt;int&gt;     &lt;dbl&gt;    &lt;int&gt;
+##  1  2013     1     1      517            515         2      830
+##  2  2013     1     1      533            529         4      850
+##  3  2013     1     1      542            540         2      923
+##  4  2013     1     1      544            545        -1     1004
+##  5  2013     1     1      554            600        -6      812
+##  6  2013     1     1      554            558        -4      740
+##  7  2013     1     1      555            600        -5      913
+##  8  2013     1     1      557            600        -3      709
+##  9  2013     1     1      557            600        -3      838
+## 10  2013     1     1      558            600        -2      753
+## # … with 832 more rows, and 12 more variables: sched_arr_time &lt;int&gt;,
+## #   arr_delay &lt;dbl&gt;, carrier &lt;chr&gt;, flight &lt;int&gt;, tailnum &lt;chr&gt;,
+## #   origin &lt;chr&gt;, dest &lt;chr&gt;, air_time &lt;dbl&gt;, distance &lt;dbl&gt;, hour &lt;dbl&gt;,
+## #   minute &lt;dbl&gt;, time_hour &lt;dttm&gt;
+```
+---
+# Reorder rows
++ Use verb **arrange()**
+  + similar to filter, but changes the order of rows
++ Example:
+
+```r
+arrange(flights, year, month, sort(day,decreasing = TRUE))
+## # A tibble: 336,776 x 19
+##     year month   day dep_time sched_dep_time dep_delay arr_time
+##    &lt;int&gt; &lt;int&gt; &lt;int&gt;    &lt;int&gt;          &lt;int&gt;     &lt;dbl&gt;    &lt;int&gt;
+##  1  2013     1    31     1446           1450        -4     1650
+##  2  2013     1    31     1447           1450        -3     1811
+##  3  2013     1    31     1447           1415        32     1540
+##  4  2013     1    31     1448           1303       105     1635
+##  5  2013     1    31     1449           1445         4       NA
+##  6  2013     1    31     1450           1329        81     1804
+##  7  2013     1    31     1452           1330        82     1753
+##  8  2013     1    31     1453           1455        -2     1623
+##  9  2013     1    31     1454           1455        -1     1833
+## 10  2013     1    31     1454           1445         9     1802
+## # … with 336,766 more rows, and 12 more variables: sched_arr_time &lt;int&gt;,
+## #   arr_delay &lt;dbl&gt;, carrier &lt;chr&gt;, flight &lt;int&gt;, tailnum &lt;chr&gt;,
+## #   origin &lt;chr&gt;, dest &lt;chr&gt;, air_time &lt;dbl&gt;, distance &lt;dbl&gt;, hour &lt;dbl&gt;,
+## #   minute &lt;dbl&gt;, time_hour &lt;dttm&gt;
+```
+---
+# Pick variables by name
++ Use verb **select()**
+  + select columns
+  + good to narrow down values
+  + helper function:
+      + *starts_with*
+      + *ends_with*
+      + *contains*
+      + *matches* (regular expression)
+      + *num_range*
+      + *everything*
+
+---
+
+# Examples
+
+```r
+select(flights, year:day)
+```
+
+```
+## # A tibble: 336,776 x 3
+##     year month   day
+##    &lt;int&gt; &lt;int&gt; &lt;int&gt;
+##  1  2013     1     1
+##  2  2013     1     1
+##  3  2013     1     1
+##  4  2013     1     1
+##  5  2013     1     1
+##  6  2013     1     1
+##  7  2013     1     1
+##  8  2013     1     1
+##  9  2013     1     1
+## 10  2013     1     1
+## # … with 336,766 more rows
+```
+---
+
+```r
+select(flights, starts_with('dep'))
+```
+
+```
+## # A tibble: 336,776 x 2
+##    dep_time dep_delay
+##       &lt;int&gt;     &lt;dbl&gt;
+##  1      517         2
+##  2      533         4
+##  3      542         2
+##  4      544        -1
+##  5      554        -6
+##  6      554        -4
+##  7      555        -5
+##  8      557        -3
+##  9      557        -3
+## 10      558        -2
+## # … with 336,766 more rows
+```
+---
+
+```r
+select(flights, contains('time'))
+```
+
+```
+## # A tibble: 336,776 x 6
+##    dep_time sched_dep_time arr_time sched_arr_time air_time
+##       &lt;int&gt;          &lt;int&gt;    &lt;int&gt;          &lt;int&gt;    &lt;dbl&gt;
+##  1      517            515      830            819      227
+##  2      533            529      850            830      227
+##  3      542            540      923            850      160
+##  4      544            545     1004           1022      183
+##  5      554            600      812            837      116
+##  6      554            558      740            728      150
+##  7      555            600      913            854      158
+##  8      557            600      709            723       53
+##  9      557            600      838            846      140
+## 10      558            600      753            745      138
+## # … with 336,766 more rows, and 1 more variable: time_hour &lt;dttm&gt;
+```
+---
+# Create new variables
++ Use verb **mutate**
+  + adds new columns to the end of the dataset
+  + also possible to use variables just created
++ Verb **transmute** only keeps new variables
++ Examples:
+
+```r
+mutate(flights, gain= dep_delay - arr_delay, speed= distance/air_time*60,gain_per_hour= gain/hour)
+## # A tibble: 336,776 x 22
+##     year month   day dep_time sched_dep_time dep_delay arr_time
+##    &lt;int&gt; &lt;int&gt; &lt;int&gt;    &lt;int&gt;          &lt;int&gt;     &lt;dbl&gt;    &lt;int&gt;
+##  1  2013     1     1      517            515         2      830
+##  2  2013     1     1      533            529         4      850
+##  3  2013     1     1      542            540         2      923
+##  4  2013     1     1      544            545        -1     1004
+##  5  2013     1     1      554            600        -6      812
+##  6  2013     1     1      554            558        -4      740
+##  7  2013     1     1      555            600        -5      913
+##  8  2013     1     1      557            600        -3      709
+##  9  2013     1     1      557            600        -3      838
+## 10  2013     1     1      558            600        -2      753
+## # … with 336,766 more rows, and 15 more variables: sched_arr_time &lt;int&gt;,
+## #   arr_delay &lt;dbl&gt;, carrier &lt;chr&gt;, flight &lt;int&gt;, tailnum &lt;chr&gt;,
+## #   origin &lt;chr&gt;, dest &lt;chr&gt;, air_time &lt;dbl&gt;, distance &lt;dbl&gt;, hour &lt;dbl&gt;,
+## #   minute &lt;dbl&gt;, time_hour &lt;dttm&gt;, gain &lt;dbl&gt;, speed &lt;dbl&gt;,
+## #   gain_per_hour &lt;dbl&gt;
+```
+---
+
+```r
+transmute(flights, gain= dep_delay - arr_delay, speed= distance/air_time*60, gain_per_hour= gain/hour)
+## # A tibble: 336,776 x 3
+##     gain speed gain_per_hour
+##    &lt;dbl&gt; &lt;dbl&gt;         &lt;dbl&gt;
+##  1    -9  370.        -1.8  
+##  2   -16  374.        -3.2  
+##  3   -31  408.        -6.2  
+##  4    17  517.         3.4  
+##  5    19  394.         3.17 
+##  6   -16  288.        -3.2  
+##  7   -24  404.        -4    
+##  8    11  259.         1.83 
+##  9     5  405.         0.833
+## 10   -10  319.        -1.67 
+## # … with 336,766 more rows
+```
+---
+# Summaries
++ Use verb **summarise**
+  + collapses data
+  + use together with **group_by**
+---
+
+# Examples:
+.pull-left[
+
+```r
+by_day &lt;- group_by(flights, year, month, day)
+by_day
+## # A tibble: 336,776 x 19
+## # Groups:   year, month, day [365]
+##     year month   day dep_time sched_dep_time dep_delay arr_time
+##    &lt;int&gt; &lt;int&gt; &lt;int&gt;    &lt;int&gt;          &lt;int&gt;     &lt;dbl&gt;    &lt;int&gt;
+##  1  2013     1     1      517            515         2      830
+##  2  2013     1     1      533            529         4      850
+##  3  2013     1     1      542            540         2      923
+##  4  2013     1     1      544            545        -1     1004
+##  5  2013     1     1      554            600        -6      812
+##  6  2013     1     1      554            558        -4      740
+##  7  2013     1     1      555            600        -5      913
+##  8  2013     1     1      557            600        -3      709
+##  9  2013     1     1      557            600        -3      838
+## 10  2013     1     1      558            600        -2      753
+## # … with 336,766 more rows, and 12 more variables: sched_arr_time &lt;int&gt;,
+## #   arr_delay &lt;dbl&gt;, carrier &lt;chr&gt;, flight &lt;int&gt;, tailnum &lt;chr&gt;,
+## #   origin &lt;chr&gt;, dest &lt;chr&gt;, air_time &lt;dbl&gt;, distance &lt;dbl&gt;, hour &lt;dbl&gt;,
+## #   minute &lt;dbl&gt;, time_hour &lt;dttm&gt;
+```
+]
+.pull-right[
+
+```r
+summarise(by_day, delay= mean(dep_delay,na.rm = TRUE))
+## # A tibble: 365 x 4
+## # Groups:   year, month [12]
+##     year month   day delay
+##    &lt;int&gt; &lt;int&gt; &lt;int&gt; &lt;dbl&gt;
+##  1  2013     1     1 11.5 
+##  2  2013     1     2 13.9 
+##  3  2013     1     3 11.0 
+##  4  2013     1     4  8.95
+##  5  2013     1     5  5.73
+##  6  2013     1     6  7.15
+##  7  2013     1     7  5.42
+##  8  2013     1     8  2.55
+##  9  2013     1     9  2.28
+## 10  2013     1    10  2.84
+## # … with 355 more rows
+```
+]
+---
+# Magrittr Package
+.pull-left[
++ Pipe operator ' %&gt;% '
++ Useful to tie operations together
++ Easier to read code
++ '.' is a place holder
+]
+.pull-right[
++ Example:
+
+```r
+flights %&gt;% 
+  group_by(., year, month, day) %&gt;% 
+  summarise(.,delay= mean(dep_delay,na.rm = TRUE))
+## # A tibble: 365 x 4
+## # Groups:   year, month [12]
+##     year month   day delay
+##    &lt;int&gt; &lt;int&gt; &lt;int&gt; &lt;dbl&gt;
+##  1  2013     1     1 11.5 
+##  2  2013     1     2 13.9 
+##  3  2013     1     3 11.0 
+##  4  2013     1     4  8.95
+##  5  2013     1     5  5.73
+##  6  2013     1     6  7.15
+##  7  2013     1     7  5.42
+##  8  2013     1     8  2.55
+##  9  2013     1     9  2.28
+## 10  2013     1    10  2.84
+## # … with 355 more rows
+```
+]
+---
+# Other pipes
++ **%T&gt;%** returns the right-hand side instead of the left
+  + useful with functions that don't return anything, e.g. plot
++ **%$%** 'explodes' the data
+  + Useful to refer to variables by name when working with base R
+
+---
+
+```r
+rnorm(100) %&gt;% 
+  matrix(ncol = 2) %&gt;% 
+  plot() %&gt;% 
+  str()
+```
+
+![](Introduction_xaringan_files/figure-html/unnamed-chunk-46-1.png)&lt;!-- --&gt;
+
+```
+##  NULL
+```
+
+---
+
+```r
+rnorm(100) %&gt;% 
+  matrix(ncol = 2) %T&gt;% 
+  plot() %&gt;% 
+  str()
+```
+
+![](Introduction_xaringan_files/figure-html/unnamed-chunk-47-1.png)&lt;!-- --&gt;
+
+```
+##  num [1:50, 1:2] 1.353 2.63 -0.721 -0.855 -0.69 ...
+```
+---
+
+```r
+mtcars %$%
+  cor(disp,mpg)
+## [1] -0.8475514
+```
+    </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
+<script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
+<script>var slideshow = remark.create();
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();</script>
+
+<script>
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();
+</script>
+
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+};
+slideshow._releaseMath(document);
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>

@@ -1,0 +1,587 @@
+---
+title: "Introduction"
+author: "Sergio Mosquim Junior"
+date: "9/4/2019"
+output:
+  xaringan::moon_reader:
+    self_contained: FALSE
+    lib_dir: libs
+    css: xaringan-themer.css
+    highlightLines: true
+---
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+```{r,include=FALSE}
+library(tidyverse)
+library(pryr)
+library(lubridate)
+library(magrittr)
+library(nycflights13)
+```
+```{r xaringan-themer, include = FALSE}
+library(xaringanthemer)
+solarized_light()
+```
+
+# Prerequisites
++ R [here](https://cran.r-project.org)
++ R Studio [here](https://www.rstudio.com/products/rstudio/#Desktop)
++ packages: tidyverse, forcats, stringr, readr, purrr (should be loaded with tidyverse)
+
+---
+# Overview
+1. Rmarkdown
+2. Tidyverse
+3. Data Structures
+4. Data manipulation
+
+---
+class: center, middle
+
+# Rmarkdown
+
+---
+# Why?
++ Save and execute code
++ Generate reports which can easily shared
++ Support for different documents (notebooks, presentations, books, scientific articles, etc.)
++ Code and text in the same document
+
+---
+class: center, middle
+# How?
+```{r Rmarkdown1,echo=FALSE}
+knitr::include_graphics(path = 'rmarkdown1.png',dpi = NA)
+```
+
+---
+class: middle
+```{r Rmarkdown2,echo=FALSE}
+knitr::include_graphics(path = 'rmarkdown2.png',dpi = NA)
+```
++ Read more [here](https://bookdown.org/yihui/rmarkdown/)
++ Let me know if interested in a workshop on RMarkdown
+---
+class: center, middle
+# Tidyverse
+---
+# What is?
++ Collection of packages for data science
++ They share a common language
++ Made to work well together
+---
+class: center, middle
+```{r tidyverse,fig.cap='Tidyverse pipeline',echo=FALSE,fig.show='hold',fig.align='center'}
+knitr::include_graphics(path = 'tidyverse.png',dpi = NA)
+```
+---
+# Tidy Data
++ Three rules:
+  1. Each variable must have its own column
+  2. Each observation must have its own row
+  3. Each value must have its own cell
+---
+class: center, middle, inverse
+
+# Data Structures
+---
+# Vectors
++ Two types of vectors
+  1. Atomic Vectors
+      + logical
+      + numeric (double + integer)
+      + character
+      + complex
+      + raw
+  2. Lists
+  3. Augmented vectors
+      + Factors
+      + Dates
+      + Date-times
+      + Tibbles
+---
+class: middle, center
+
+# Atomic Vectors
+---
+# Logical Vectors
++ Three values
+  + FALSE
+  + TRUE
+  + NA
+
+## Example:
+```{r}
+1:10 %% 3 == 0
+```
+???
+They're usually constructed by making different comparisons
+---
+# Numeric Vectors
++ Include both integer and double vectors
++ Default is double
+
+## Example:
+```{r}
+sqrt(2)**2 == 2
+```
+```{r}
+as.integer(sqrt(2)**2)==2
+```
+???
+It's important to note that double is an approximation of a float point number, so you may run into issues when running operations such as, for example:
+---
+# Character Vectors
++ Complex
+
+## Example
+```{r}
+x <- "This is a reasonably long string."
+pryr::object_size(x)
+
+y <- rep(x, 1000)
+pryr::object_size(y)
+```
+???
+It is considered the most complex because each element is a string, ans strings can contain an arbitrary amount of data
+
+This is to show that y doesn't take as much space as 1000 times x, even though it is supposed to be just 1000 times the same string
+---
+class: center, middle
+
+# Using atomic vectors
+---
+# Converting between types
+```{r}
+x <- 1
+str(x)
+# Numeric
+str(as.integer(x))
+# Character
+str(as.character(x))
+# Logical
+str(as.logical(x))
+```
+---
+# Getting vector type
++ There are a couple of functions one can use in this case. Example:
+```{r}
+typeof(x)
+is_atomic(x)
+is_double(x)
+is_logical(x)
+```
+---
+# Rename
++ Example:
+```{r}
+x <- c(a=1, b=2, c=3)
+x
+```
+```{r}
+set_names(x,c('x','y','z'))
+```
+---
+# Get elements of interest
++ Use single '[' for that
++ Example:
+```{r}
+x[1]
+x[2]
+```
+---
+# Vector recycling
++ Some operations recycle vectors if they're of different sizes, for example:
+```{r,collapse=TRUE}
+data.frame(x=1:4,y=1:2)
+```
+
++ However, tidyverse prevents this from happening to anything which is not a scalar
+```{r,collapse=TRUE}
+tibble(x=1:4,y=rep(1:2,2))
+```
+???
+Vector recycling is the reason why operations such as  1:10+100 work.
+However, that is not the case for tidyverse functions. Instead, you have to write as rep() in order to have that vector repeated.
+---
+class: center, middle
+
+# Lists
+---
+# Lists
++ Also called recursive vectors (can store multiple lists)
++ Created by using **list()**
+
+???
+Lists are also called recursive vectors for the simple reason that they may store multiple lists. Moreover, lists are heterogenous, in the sense that different types of data can be stored within lists, while for vectors only one type of data can be used. They can be created using the command list()
+---
+# Useful commands
++ **str()**: shows the structure of a list without focusing on the contents
+```{r,echo=FALSE}
+example_list <- list(x=1:4,y=letters,z=TRUE)
+```
+```{r}
+str(example_list)
+```
+
++ '[' to extract sublists
+```{r}
+str(example_list[2])
+```
+---
++ '[[' to extract a single component from a list
++ Can also reference by name by using '$'
+```{r}
+str(example_list[[2]])
+str(example_list$y)
+example_list[[2]][1]
+```
+---
+class: center, middle
+
+# Augmented Vectors
+---
+# Augmented Vectors
++ Vectors + metadata
+???
+Every vector has basically two important properties, type and length, which can be determined by typeof() and length().
+There are vectors, however, which have additional data, and these are known as augmented vectors. They can be of three different types, including factors, date and date-time, and data frames or tibbles. Factors are built on top of integers, dates and date-time are built on top of numeric vectors and data frames and tibbles are built on top of lists.
+---
+# Factors
++ Represent categorical data
++ Example:
+```{r}
+example_factor <- factor(c('ab','cd','ab'),levels = c('ab','cd','ef'))
+example_factor
+```
+???
+Factors are designed to represent categorical data, or data that can only take certain values. As i said previously, they're built on top of integers, and have an additional levels attribute
+---
+# Dates
++ Numeric vectors
++ Example:
+```{r}
+example_date <- as.Date('1971-01-01')
+unclass(example_date)
+```
+???
+In R, they are numeric vectors which represent the number of days since 1 January 1970.
+---
+# Date-time
++ Also numeric vectors
++ *lubridate* package
++ You also have a *tzone* attribute which you can choose depending on where you are
++ Example:
+```{r}
+example_datetime <- ymd_hm('1970-01-01 01:00')
+unclass(example_datetime)
+```
+???
+Similar to dates, but they represent the number of seconds since 1 January 1970. A good package to work with this kind of data is the lubridate package.
+One important thing to know if that dates prior to 1 January 1970 will be represented as negative numbers
+---
+# Tibbles
++ Based on lists
++ Example
+```{r}
+nycflights13::flights
+```
+???
+Tibbles are augmented lists. They have class 'tbl_df' + 'tbl' + 'data.frame' and names and row.names attributes. The nice thing about tibble is the way they're printed when compared to data frames. They show the variable names, the type of each variable, which is helpful to visualise when importing data, and it automatically prints rows and columns compatible with the screen size you're using, which makes it easier to visualize.
+---
+class: inverse, center, middle
+
+# Strings
+---
+# Strings
++ **Stringr** package
++ Created by using ' or " 
++ Special characters added by using '\'
++ Helpful characters:
+  + '\\t' for tab
+  + '\\n' newline
+  + run ?" ' " for more
+
+???
+There are different functions that work with strings in base R, but they can be inconsistent. Therefore, we're using the stringr package.
+---
+# Useful functions
++ **str_length()** tells you the number of characters in a string
++ **str_c()** to combine strings
++ **str_replace()** to replace patterns
++ **str_sub()** extracts parts of a string giving start and end positions
++ **str_to_lower()** or **str_to_upper()** to convert to upper or lower case. Can take language in the *locale* argument
+  + Language code based on ISO 639
++ **str_order()** and **str_sort()** to sort strings (also take *locale* argument)
+---
+
+# Examples
+```{r,collapse=TRUE}
+example_string <- c('Apple','Banana','Pear')
+str_length(example_string)
+```
+```{r,collapse=TRUE}
+str_c(example_string,collapse = ' ')
+```
+```{r,collapse=TRUE}
+str_c('Apple','Banana',sep = ', ')
+```
+```{r,collapse=TRUE}
+str_sort(example_string,decreasing = TRUE,locale = 'en')
+```
+```{r,collapse=TRUE}
+str_sub(example_string,1,-2)
+```
+```{r,collapse=TRUE}
+str_to_upper(example_string,locale = 'en')
+```
+---
+# Matching patterns with regular expressions
++ Use regular expresions
++ Check [this](http://www.rexegg.com/regex-quickstart.html#ref) website for regular expressions
+
+## Examples:
+```{r,collapse=TRUE}
+str_view_all(example_string,pattern = '[aeiou]')
+```
+```{r,collapse=TRUE}
+str_detect(example_string,pattern = '^[aeiouAEIOU]')
+```
+---
+class: inverse, center, middle
+
+# Data Import
+---
+# Data Import
++ For this we're again using the tidyverse, namely a package called readr
++ Most functions in the package focus on turning flat files in data frames
+
+## Functions
++ **read_csv()** reads comma delimited files
++ **read_csv2()** reads semicolon separated files
++ **read_tsv()** reads tab separated files
++ **read_delim()** reads files with any delimiters
+
+## Attributes
++ Use *skip=n* to skip the first *n* lines
++ Use *comment= '#'* to drop all lines which start with for example #
++ *col_names* uses the first ine as headings
++ *na* lets you specify how to treat missing values in your data
+---
+# Parsing data
++ **parse_()** functions take a vector and return a more specified vector
++ Example:
+```{r}
+str(parse_logical(c("TRUE", "FALSE", "NA")))
+str(parse_date(c("2010-01-01", "1979-10-14")))
+```
+---
++ If parsing fails, you get a warning, and features will be missing from output
++ Parsing numbers:
+  + numbers are written differently in differnt parts of the world
+  + numbers can be surrounded by other characters '$', '£'
+  + numbers may contain grouping characters ','
+  + use *locale* attribute
+```{r,collapse=TRUE}
+parse_double("1,23", locale = locale(decimal_mark = ","))
+parse_double("1.23", locale = locale(decimal_mark = "."))
+parse_double("1,23")
+```
+---
+```{r}
+# Used in America
+parse_number("$123,456,789")
+
+# Used in many parts of Europe
+parse_number("123.456.789", locale = locale(grouping_mark = "."))
+
+# Used in Switzerland
+parse_number("123'456'789", locale = locale(grouping_mark = "'"))
+```
+---
+# Parsing strings
++ Characters depend on encoding
+  + English is well represented in ASCII
+  + Readr uses UTF-8
+    + understands every possible character 
+    + may cause problems with older systems that do not understand UTF-8
+---
+
+# Parsing factors
++ Give **parse_vector()** a *levels* attribute to give back a warning whenever an unexpected value is present
++ Example:
+```{r}
+fruit <- c("apple", "banana")
+parse_factor(c("apple", "banana", "bananana"), levels = fruit)
+```
+---
+# Parsing Problems
++ **readr** guesses the parsing using the first 1000 rows
+  + Might have issues after the first 1000 rows
+  + First rows might contain several missing values
++ Solution:
+  + set *col_types* attribute in read_ function
+  + for every *parse_* there's a *col_* option
+???
+Basically, you can set the columns manually, increase the number of rows the guess is made on or have everything as strings which then you can fix. Have a look at rio package, which is a swiss army knife for data
+---
+
+# Example:
+```{r, collapse=TRUE}
+challenge <- read_csv(readr_example('challenge.csv'))
+tail(challenge)
+```
+---
+
+```{r,collapse=TRUE}
+challenge <- read_csv(readr_example('challenge.csv'),col_types = cols(x=col_double(),y=col_date()))
+tail(challenge)
+```
+---
+class: inverse, middle, center
+
+# Data Manipulation
+---
+# Overview
++ Syntax
++ *Dplyr* package
++ *Magrittr* package
++ Examples
+---
+# Syntax
++ In tidyverse, verbs work in a similar way
+  1. Data frame
+  2. Arguments on what to do with it
+  3. resulst in a new data frame
+
+---
+# *Dplyr* package
++ Pick observations by values
++ Reorder rows
++ Pick variables by names
++ Create new variables
++ Summary of values
+---
+# Pick observations by values
++ use verb **filter()**
+  + used to filter rows
++ Example (*nycflights13* package):
+```{r,echo=FALSE,include=FALSE}
+flights
+```
+```{r,collapse=TRUE}
+# select flights on the 1st of January
+filter(flights,month==1,day==1)
+```
+---
+# Reorder rows
++ Use verb **arrange()**
+  + similar to filter, but changes the order of rows
++ Example:
+```{r, collapse=TRUE}
+arrange(flights, year, month, sort(day,decreasing = TRUE))
+```
+---
+# Pick variables by name
++ Use verb **select()**
+  + select columns
+  + good to narrow down values
+  + helper function:
+      + *starts_with*
+      + *ends_with*
+      + *contains*
+      + *matches* (regular expression)
+      + *num_range*
+      + *everything*
+
+---
+
+# Examples
+```{r}
+select(flights, year:day)
+```
+---
+```{r}
+select(flights, starts_with('dep'))
+```
+---
+```{r}
+select(flights, contains('time'))
+```
+---
+# Create new variables
++ Use verb **mutate**
+  + adds new columns to the end of the dataset
+  + also possible to use variables just created
++ Verb **transmute** only keeps new variables
++ Examples:
+```{r,collapse=TRUE}
+mutate(flights, gain= dep_delay - arr_delay, speed= distance/air_time*60,gain_per_hour= gain/hour)
+```
+---
+```{r,collapse=TRUE}
+transmute(flights, gain= dep_delay - arr_delay, speed= distance/air_time*60, gain_per_hour= gain/hour)
+```
+---
+# Summaries
++ Use verb **summarise**
+  + collapses data
+  + use together with **group_by**
+---
+
+# Examples:
+.pull-left[
+```{r,collapse=TRUE}
+by_day <- group_by(flights, year, month, day)
+by_day
+```
+]
+.pull-right[
+```{r,collapse=TRUE}
+summarise(by_day, delay= mean(dep_delay,na.rm = TRUE))
+```
+]
+---
+# Magrittr Package
+.pull-left[
++ Pipe operator ' %>% '
++ Useful to tie operations together
++ Easier to read code
++ '.' is a place holder
+]
+.pull-right[
++ Example:
+```{r, collapse=TRUE}
+flights %>% 
+  group_by(., year, month, day) %>% 
+  summarise(.,delay= mean(dep_delay,na.rm = TRUE))
+```
+]
+---
+# Other pipes
++ **%T>%** returns the right-hand side instead of the left
+  + useful with functions that don't return anything, e.g. plot
++ **%$%** 'explodes' the data
+  + Useful to refer to variables by name when working with base R
+
+---
+```{r,collapse=TRUE}
+rnorm(100) %>% 
+  matrix(ncol = 2) %>% 
+  plot() %>% 
+  str()
+```
+
+---
+```{r,collapse=TRUE}
+rnorm(100) %>% 
+  matrix(ncol = 2) %T>% 
+  plot() %>% 
+  str()
+```
+---
+```{r,collapse=TRUE}
+mtcars %$%
+  cor(disp,mpg)
+```

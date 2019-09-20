@@ -1,0 +1,289 @@
+---
+title: "Exercises"
+output:
+  rmarkdown::html_document:
+    code_folding: 'hide'
+    toc: true
+    toc_float: true
+    smart: true
+    number_sections: true
+    highlight: 'textmate'
+    self_contained: true
+    smaller: true
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE,results = "markup",collapse = TRUE)
+library(tidyverse)
+library(magrittr)
+library(lubridate)
+library(pryr)
+```
+
+# Vectors
+
+## Considering the vectors **x** and **y**, perform the following operations:
+```{r}
+x <- 8
+y <- 2
+```
+
+### Add *x* and *y*
+```{r}
+x+y
+```
+### Subtract *x* and *y*
+```{r}
+x-y
+```
+### Multiply *x* by *y*
+```{r}
+x*y
+```
+### Remainder of dividion of *x* by *y*
+```{r}
+x %% y
+```
+
+## Now suppose that you have the following vector:
+  + x <- 1:999
+  
+### Which are even numbers?
+```{r, results='hide'}
+x <- 1:999
+even_numbers <- x %% 2 == 0
+even_numbers
+```
+
+### How about odd ones?
+```{r,results='hide'}
+odd_numbers <- x %% 2 != 0
+odd_numbers
+```
+
+## Using the *iris* data set, perform the following
+
+### Extract *Species* variable and assign it to a different
+```{r}
+iris_species <- iris$Species
+```
+
+### What's the type of vector?
+```{r}
+str(iris_species)
+
+# alternative
+is.factor(iris_species)
+
+# alternative
+type_sum(iris_species)
+```
+
+### How many observations are there?
+```{r}
+length(iris_species)
+```
+
+
+### What are the levels?
+```{r}
+levels(iris_species)
+```
+
+# Lists
+
+## Exercise 1
+
+### LCreate a cars list
+Using the *mtcars* dataset, extract the number of cylinders and horsepower, and car names and put them in a list named cars
+```{r}
+# Have a look at the data
+head(mtcars)
+
+# cyl is the cylinders, horsepower is hp and names is rows
+cylinders <- mtcars$cyl
+horsepower <- mtcars$hp
+carnames <- rownames(mtcars)
+
+#Put in a list
+cars <- list(cylinders=cylinders, HP=horsepower, Car_Names=carnames)
+```
+
+### Do the same for the *rock* dataset, extracting area and shape
+```{r}
+head(rock)
+
+rock_area <- rock$area
+rock_shape <- rock$shape
+
+rock_list <- list(Area=rock_area, Shape=rock_shape)
+```
+
+## Exercise 2
+
+### Create a list which contains both lists created before
+```{r}
+rock_cars <- list(Cars=cars, Rocks=rock_list)
+```
+
+### Visualise the list
+```{r}
+str(rock_cars)
+```
+
+### How do you get the car names?
+```{r}
+rock_cars$Cars$Car_Names
+
+# alternative
+rock_cars[['Cars']][['Car_Names']]
+
+# alternative
+rock_cars[[1]][[3]]
+```
+
+# Strings
+
+  
+## Exercise 1
+  For this exercise, we're going to be using the *fruit* data from the stringr package
+
+### Get the fruits which begin with b
+```{r}
+b_fruits <- str_detect(fruit, '^b')
+
+fruit[b_fruits]
+```
+
+### What about fruits that begin with vowels?
+```{r}
+vowel_fruit <- str_detect(fruit,'^[aeiou]')
+
+fruit[vowel_fruit]
+```
+
+## Exercise 2
+  For this exercise, we're using the *senteces* data 
+
+### How many sentences are there?
+```{r}
+length(sentences)
+```
+
+### How do you find the length of a sentence?
+```{r}
+str_length(sentences[1])
+```
+
+### How long is the longest sentence?
+```{r}
+max( str_length(sentences) )
+```
+
+### What's that sentence?
+```{r}
+#Find maximum value for all sentence lengths
+max(str_length(sentences))
+
+# Find sentence with that length
+long_sentence <- str_length(sentences)==57
+
+#Getting the sentence
+sentences[long_sentence]
+```
+
+### Reorder the sentences to alphabetical order
+```{r, results='hide'}
+# Order strings according to alphabetical order, remembering to set language, although not necessary in this case
+alphabetical <- str_order(sentences,locale = 'en')
+
+# reorder according to alphabetical order
+sentences[alphabetical]
+```
+
+# Factors
+
+  For these exercises, we're going to use the *forcats::gss_cat* dataset. It's a sample dataset from the [General Social Survey](http://gss.norc.org), i.e. a US-based survey run by NORC, an independent organisation at the University of Chicago
+  
+## Exercise 1
+  Have a look at the dataset
+  
+### Get the levels of any of the variables
+```{r}
+# Using race variable
+levels(gss_cat$race)
+
+# Alternative
+gss_cat %>% 
+  count(race)
+```
+
+### What is the most common religion in the survey?
+```{r}
+gss_cat %>% 
+  count(relig)
+
+# alternative
+summary(gss_cat$relig)
+```
+
+
+# Data Transformation
+
+## Exercise 1
+
+  Using the *nycflights13::flights* dataset, do the following:
+
+### Find flights which had an arrival delay of two or more hours
+```{r}
+nycflights13::flights %>% 
+  filter(arr_delay>=2)
+```
+
+### Find flights departed in summer (July, August, September)
+```{r}
+nycflights13::flights %>% 
+  filter(month==7| month==8| month==9)
+```
+
+### Try out the **between()** function to simplify the previous code
+```{r}
+nycflights13::flights %>% 
+  filter(between(month,7,9))
+```
+
+## Exercise 2
+
+### Sort flights to find those with greatest departure delay, putting earliest first
+```{r}
+nycflights13::flights %>% 
+  arrange(dep_delay)
+```
+
+### Which flights travelled the longest?
+```{r}
+nycflights13::flights %>% 
+  arrange(desc(air_time))
+```
+
+### Which travelled the shortest?
+```{r}
+nycflights13::flights %>% 
+  arrange(air_time)
+```
+
+## Exercise 3
+
+### Propose different ways to select *dep_time*, *dep_delay*, *arr_time*, *arr_delay* from flights
+```{r}
+nycflights13::flights %>% 
+  select(dep_time,dep_delay,arr_time,arr_delay)
+
+# Alternative
+nycflights13::flights %>% 
+  select(starts_with('dep'),starts_with('arr'))
+```
+
+### What is wrong with the following code?
+>select(flights,contains('TIME'))
+
