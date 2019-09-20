@@ -18,4 +18,4 @@ If you want to use the R markdown files of the lectures and exercises, you can d
 [1]: Data/2019-09-20/Introduction_workshop/Introduction_xaringan.html
 [2]: Data/2019-09-20/Introduction_workshop/Exercises.html
 [3]: Data/2019-09-20/Introduction_workshop/Introduction_xaringan.Rmd
-[3]: Data/2019-09-20/Introduction_workshop/Exercises.Rmd
+[4]: Data/2019-09-20/Introduction_workshop/Exercises.Rmd
