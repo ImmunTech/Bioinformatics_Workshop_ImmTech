@@ -5,7 +5,7 @@ title: Syllabus
 
 #### Workshop syllabus
 
-**Monday 2019-09-20:** [Basics in R][1]
+**Friday 2019-09-20:** [Basics in R][1]
 
 For this session, we mainly worked with R and related tools:
 1. Rmarkdown

@@ -5,7 +5,7 @@ title:  Reading materials
 
 #### Reading materials
 
-**Monday 2019-09-20**
+**Friday 2019-09-20**
 
 [Detailed exercises in R for beginners][1]
 

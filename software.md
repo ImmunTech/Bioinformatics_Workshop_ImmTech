@@ -5,7 +5,7 @@ title:  Software
 
 #### Softwares
 
-**From Monday 2019-09-20**
+**From Fiday 2019-09-20**
 
 1. [Rstudio][1]
 2. [tidyverse][2]
