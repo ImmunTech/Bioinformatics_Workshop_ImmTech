@@ -16,27 +16,27 @@ If you want to use the R markdown files of the lectures and exercises, you can d
 
 *All the topics below are preliminary*
 
-##### Friday 2019-10-11 (It's a half working day! Most probably this will rescheduled)
+##### Friday 2019-10-11 *(It's a half working day! Most probably this will rescheduled)*
 
-<span style="color:red"> Basic Statistical concepts and tools for application **Bioforum**</span>
+<span style="color:red"> Basic Statistical concepts and tools for application
 
 <span style="color:blue"> **1300 to 1500:**</span>
 
 ##### Friday 2019-10-11
 
-<span style="color:red"> Data Visualization techniques **Bioforum**</span>
+<span style="color:red"> Data Visualization techniques
 
 <span style="color:blue"> **1300 to 1500:**</span>
 
 ##### Friday 2019-11-22
 
-<span style="color:red"> Differential gene/Protein expression analyses **Bioforum**</span>
+<span style="color:red"> Differential gene/Protein expression analyses
 
 <span style="color:blue"> **1300 to 1500:**</span>
 
 ##### Friday 2019-12-12
 
-<span style="color:red"> Introduction to data manipulation in Bioconductor R **Bioforum**</span>
+<span style="color:red"> Introduction to data manipulation in Bioconductor R
 
 <span style="color:blue"> **1300 to 1500:**</span>
 
