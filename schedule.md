@@ -28,8 +28,6 @@ You would need these two files [gene_counts][7] and [metadata][8]
 
 R markdown file for the exercise: [R-markdown file][9]
 
-*Course materials will eventually be uploaded here*
-
 ##### Wednesday 2019-OCT-23
 
 ###### <span style="color:blue"> Data Visualization in R at **Bioforum**</span>
