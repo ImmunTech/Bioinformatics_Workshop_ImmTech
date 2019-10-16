@@ -18,7 +18,7 @@ If you want to use the R markdown files of the lectures and exercises, you can d
 
 ##### Wednesday 2019-OCT-16
 
-###### <span style="color:blue"> R basics (part II) at **406 Kitchen**</span>
+###### <span style="color:blue"> R basics (part II) at **406 Kitchen**</span> You can follow the lecture and exercises in html files here: [Lecture][5], [Exercises][6]
 
 Course organiser: Lokeshwaran Manoharan
 
@@ -59,3 +59,5 @@ Course organiser: *To Be Decided*
 [2]: Data/2019-09-20/Introduction_workshop/Exercises.html
 [3]: Data/2019-09-20/Introduction_workshop/Introduction_xaringan.Rmd
 [4]: Data/2019-09-20/Introduction_workshop/Exercises.Rmd
+[5]: Data/2019-10-15/R_course_ImmunTech.pptx
+[6]: Data/2019-10-15/R_exercise_Lokesh.html
