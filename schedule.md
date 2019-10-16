@@ -59,5 +59,5 @@ Course organiser: *To Be Decided*
 [2]: Data/2019-09-20/Introduction_workshop/Exercises.html
 [3]: Data/2019-09-20/Introduction_workshop/Introduction_xaringan.Rmd
 [4]: Data/2019-09-20/Introduction_workshop/Exercises.Rmd
-[5]: Data/2019-10-15/R_course_ImmunTech.pptx
+[5]: Data/2019-10-15/R_course_ImmunTech.pdf
 [6]: Data/2019-10-15/R_exercise_Lokesh.html
