@@ -18,15 +18,15 @@ If you want to use the R markdown files of the lectures and exercises, you can d
 
 ##### Wednesday 2019-OCT-16
 
-###### <span style="color:blue"> R basics (part II) at **406 Kitchen**</span> You can follow the lecture and exercises in html files here: [Lecture][5], [Exercises][6]
+###### <span style="color:blue"> R basics (part II) at **406 Kitchen**</span>
+
+Course organiser: Lokeshwaran Manoharan
+
+<span style="color:red"> **1300 to 1500:**</span> You can follow the lecture and exercises in html files here: [Lecture][5], [Exercises][6]
 
 You would need these two files [gene_counts][7] and [metadata][8]
 
 R markdown file for the exercise: [R-markdown file][9]
-
-Course organiser: Lokeshwaran Manoharan
-
-<span style="color:red"> **1300 to 1500:**</span>
 
 *Course materials will eventually be uploaded here*
 
