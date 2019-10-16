@@ -1,0 +1,343 @@
+---
+title: "R_exercise_part2"
+author: "Lokesh"
+date: "October 15, 2019"
+output: 
+  rmarkdown::html_document:
+    code_folding: 'show'
+    toc: true
+    toc_float: true
+    smart: true
+    number_sections: true
+    highlight: tango
+    self_contained: true
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+```{r wrap-hook, include=FALSE}
+# Ignore this part! This is only for formatting this document in the html file!
+library(knitr)
+hook_output = knit_hooks$get('output')
+knit_hooks$set(output = function(x, options) {
+  # this hook is used only when the linewidth option is not NULL
+  if (!is.null(n <- options$linewidth)) {
+    x = knitr:::split_lines(x)
+    # any lines wider than n should be wrapped
+    if (any(nchar(x) > n)) x = strwrap(x, width = n)
+    x = paste(x, collapse = '\n')
+  }
+  hook_output(x, options)
+})
+```
+
+# Basic concepts in R
+
+## Variables
+
+As explained in the slides, you can assign a value and initiate variable by using `<-` or `=` symbols. You can see the examples below:
+
+```{r}
+# Numeric vaiables
+x <- 8
+y <- 2
+
+# String varibales
+str_var1 <- "I"
+str_var2 <- "love"
+str_var3 <- "Batman"
+```
+
+### Arithmetic operations
+
+Similar to what we covered in the last session as well, you can do multiple arithmetic orations with the numeric variables.
+
+```{r, eval=FALSE}
+#addition
+
+x+y
+
+#subtraction
+
+x-y
+
+#multiplication
+
+x*y
+
+#division
+
+x/y
+
+#reminder
+
+x %% y
+```
+
+
+## Vectors
+
+You can initiate a vector direct by using `c()` function. Here `c` technically stands for `concatenation`
+
+```{r, eval=FALSE}
+
+n <- c(2,3,5,6,7,4,2,8,9)
+
+str_vec <- c(str_var1, str_var2, str_var3)
+
+```
+
+With the vector `n`, You can try do some of the basic statistics functions like `log()`, `mean()`, `max()` and so on as explained in the slides to get a hang of it!
+
+![](/home/lokesh/Teaching/Bioinformatics_Workshop_ImmTech/Data/2019-10-15/figures_for_presentation/s14.png)
+## String operations
+
+Here I will introduce some in-built functions to manipulate strings! Some of these functions can be very handy when you work with tables with different strings and you want to search/edit them!
+
+*Remember to use `?` on the different functions to understand them better*
+
+```{r, eval=FALSE}
+# To make sub-strings out of a larger string!
+
+substr(str_vec, start=1, stop=2)
+substr(str_vec, start=1, stop=4)
+
+# To search in a string
+grep("a", str_vec)
+grep("i", str_vec)
+grep("i", str_vec, ignore.case = TRUE)
+
+          #just for the fun of it
+
+str_var4 <- "but not Robin"
+str_vec2 <- c(str_vec, str_var4) #note that we add an extra element to the already existing vector.
+grep("o", str_vec2)
+
+#substitution
+gsub("Robin", "Joker", str_vec2, ignore.case=FALSE)
+
+#splitting strings
+strsplit(str_var3, "t")
+
+#concatenating
+paste(str_vec2, collapse=" ")
+
+#change case
+toupper(str_var3)
+tolower(str_var3)
+```
+
+**Note:** Almost all of the functions above are much more powerful than what you see in the results. When you look into the help page of any of these functions you would see `pattern` as an argument for these functions. This stands for [REGEX patterns](http://www.rexegg.com/regex-quickstart.html) that you can learn to use capture string patterns in large texts or tables! I will not touch more upon this as `REGEX` alone can be a course on its own!
+
+# Reading in files to dataframes
+
+You can generally import a `csv` or `tsv` file into the R environment using `read.table` command. This would automatically create a datatype called `data.frame` that stores information from a matrix (like an excel sheet) in a structured way! 
+
+```{r, eval=FALSE}
+gene_counts <- read.table("~/Documents/Teaching/Bioinfo_workshops/gene_counts.tsv", sep = "\t",row.names = 1, header = T)
+metadata <- read.table("~/Documents/Teaching/Bioinfo_workshops/metadata.tsv", sep = "\t", header = T)
+
+```
+
+**Note:** It is important that by using `?read.table` command, you can see that there are many other arguments to this function that one can use to read in their file, the way they want. Like `skip` can for example be used to skip a certain number of lines from your file! This would be helpful, if you have a file with some comments in the beginning of a counts table for example!
+
+## Looking inside a dataframe
+
+1. You can use functions like `names()` that will give you all the different column names of a data frame and `summary()` that will summarize your data.frame based on the data that is in the data.frame.
+
+2. You can access the different columns in the data.frame using `$` sign. Then the result of this action becomes a `vector` of values in that column. You can think of this as accessing a particular column in a an excel sheet!
+
+3. The functions `row.names()` and `colnames()` can be used to set the row-headers and column-headers as the functions suggest! For example if you did not have headers and row names in the file you imported! In the `metadata` dataframe, we did not include renames! So, we add a row name based on one of the columns!
+
+4. You find out what kind of datatype your object is either by using `class()` or `str()` standing for `structure` of your R object! 
+
+```{r, eval=FALSE}
+#summary
+names(gene_counts)
+summary(metadata)
+
+#using $ to access the columns of a dataframe
+metadata$Sample
+gene_counts$Sample_1
+
+#rownames
+row.names(metadata) <- metadata$Sample
+
+#datatypes
+class(metadata$Sex)
+str(metadata$Sex)
+```
+
+## Difference between a matrix and a dataframe
+
+1. It is good to know the difference between a matrix and a dataframe! A matrix is basically a dataframe that is not structured! You can between these formats by using the `as.matrix()` or `as.data.frame()` functions!
+
+2. You can also access and modify the contents of the dataframe or a matrix by using the syntax `[row,column]`. Here you can either specify the number or the names of the rows and columns.
+
+3. Similarly, you can also access the entire rows by `[row,]` syntax or entire columns by `[,column]` syntax. 
+
+4. You can also subset your dataframes with the help of `c()` function.
+
+5. With this syntax, you can particularly change the contents by using `<-` or `=` as shown below:
+
+```{r, eval=FALSE}
+md.mt <- as.matrix(metadata)
+
+# Notice the difference
+length(md.mt)
+length(metadata)
+
+#Accessing the contents and see the difference between the two datatypes
+metadata[2,1]
+md.mt[2,1]
+metadata["Sample_5","Age"]
+
+# Accessing entire rows and columns
+metadata["Sample_8",]
+metadata[,"Age"]
+
+# Subsetting dataframes
+metadata[c(3,5),c(2,4)]
+
+# Changing values in a dataframe
+metadata["Sample_9","Age"] <- 77
+```
+
+## Adding and removing from a dataframe
+
+1. You can add and remove row(s) or column(s) to a dataframe manually with `<-`
+
+2. or with `cbind()` or `rbind()` standing for row-bind and column-bind. In this case you make a new dataframe/vector and you bind it to the data. 
+
+3. You can remove row or column from a dataframe by using `-` sign for the particular number!
+
+```{r, eval=FALSE}
+#for example we add a bloodpressure column
+metadata$BP <- c(92,128,111,88,125,127,118,104,87,130,107,137,139,109,136,108)
+metadata
+
+# using cbind
+Glu <-c(103,180,157,147,179,80,82,116,123,150,160,117,135,141,149,124)
+metadata <- cbind(metadata,Glu)
+metadata
+
+#using rbind
+Sample_17 <- c("Sample_17", "no", 67, "M", 103, 141)
+metadata <- rbind(metadata, Sample_17)
+metadata
+# Note: You will get an error message here and we come to that later.
+
+#removing from dataframe
+metadata <- metadata[-17,]
+
+```
+
+## Checking for NA values
+
+1. There are ways to check for NA values in your dataset! You can use `is.na()` function for example and with the combination of `which()` that would basically tell you exactly where it is the case!
+
+2. you can also remove rows or columns with NA by using `na.omit()`
+
+```{r, eval=FALSE}
+#using rbind
+Sample_17 <- c("Sample_17", "no", 67, "M", 103, 141)
+metadata <- rbind(metadata, Sample_17)
+metadata
+
+#checking
+is.na(metadata)
+which(is.na(metadata))
+
+metadata <- na.omit(metadata)
+```
+
+## Looking for specific values in a dataframe and subsetting
+
+1. You can the `%in%` function to specifically look for things in your dataframe.
+2. Let's say you are looking for particular genes in your dataset, the you can use this function to subset as well
+
+```{r, eval=FALSE}
+gene_set <- c("PTPN22","LRTM2","GAGE6","OR2J2","SEMA3D","RBP4","BICD2","SDHB","PSD3","AFF1")
+gene_set %in% row.names(gene_counts)
+
+#Switch it around and use it to subset
+int_genes <- row.names(gene_counts) %in% gene_set
+int_genes_count <- gene_counts[int_genes,]
+int_genes_count
+```
+
+## Subseting data frames and matriccs
+
+1. Subset the metadata corresponding to females or any other variable.
+2. Subste the count matrix based on new meta data for females.
+```{r, eval=FALSE}
+#subset the metadata
+
+metadata_f <- metadata[metadata$Sex=="F", ]
+
+# Now extract the counts data specificaaly for females
+gene_counts_f <- gene_counts[, metadata_f$Sample]
+
+
+## The above two operations can be combined like this
+
+gene_counts_f <- gene_counts[, metadata[metadata$Sex=="F", ]$Sample]
+
+```
+
+# Factors
+
+1. factors are very important for statistical calculations. These basically the different `levels` that are there in your data. For example the `Health` in our `metadata` is a factor with two levels of `yes` and `no`. It is basically a binary factor. But you can have many levels as well!
+
+2. If there is a column in your dataframe and you want to make it a factor you can do this by `as.factor()` function
+
+3. The function `table()` tabulates observations and can be used to create bar plots quickly.
+
+```{r, eval=FALSE}
+summary(metadata)
+
+#Using factors to get observations
+table(metadata$Age)
+table(metadata$Sex)
+
+#Using factors to plot different interesting counts
+barplot(table(metadata$Healthy))
+barplot(table(metadata$Sex))
+
+#even more interesting plots
+plot(x = metadata$Sex, y = metadata$BP)
+plot(x = metadata$Sex, y = metadata$Glu)
+plot(x = metadata$Healthy, y = metadata$BP)
+plot(x = metadata$Healthy, y = metadata$Glu)
+```
+
+
+# Basic plotting 
+
+1. I also want to show  you can use basic plotting using the functions: `plot()`, `boxplot()` and `hist()`
+
+```{r, eval=FALSE}
+#histogram
+hist(gene_counts$Sample_5)
+
+#Scatter plot
+plot(gene_counts$Sample_5,gene_counts$Sample_16)
+
+#Boxplot
+boxplot(gene_counts)
+boxplot(log2(gene_counts)) # why do you get warning?
+
+boxplot(log2(gene_counts + 1))
+
+```
+
+
+
+
+
+**Hope you guys learnt some new ways handling data in R and most importantly had fun. You need to remember:**
+
+![](/home/lokesh/Teaching/Bioinformatics_Workshop_ImmTech/Data/2019-10-15/sci_art.jpg)

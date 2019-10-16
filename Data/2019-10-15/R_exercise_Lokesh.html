@@ -405,8 +405,8 @@ str_vec2 &lt;-<span class="st"> </span><span class="kw">c</span>(str_vec, str_va
 <div id="reading-in-files-to-dataframes" class="section level1">
 <h1><span class="header-section-number">2</span> Reading in files to dataframes</h1>
 <p>You can generally import a <code>csv</code> or <code>tsv</code> file into the R environment using <code>read.table</code> command. This would automatically create a datatype called <code>data.frame</code> that stores information from a matrix (like an excel sheet) in a structured way!</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">gene_counts &lt;-<span class="st"> </span><span class="kw">read.table</span>(<span class="st">&quot;~/Teaching/Bioinformatics_Workshop_ImmTech/Data/2019-10-15/gene_counts.tsv&quot;</span>, <span class="dt">sep =</span> <span class="st">&quot;</span><span class="ch">\t</span><span class="st">&quot;</span>,<span class="dt">row.names =</span> <span class="dv">1</span>, <span class="dt">header =</span> T)
-metadata &lt;-<span class="st"> </span><span class="kw">read.table</span>(<span class="st">&quot;~/Teaching/Bioinformatics_Workshop_ImmTech/Data/2019-10-15/metadata.tsv&quot;</span>, <span class="dt">sep =</span> <span class="st">&quot;</span><span class="ch">\t</span><span class="st">&quot;</span>, <span class="dt">header =</span> T)</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">gene_counts &lt;-<span class="st"> </span><span class="kw">read.table</span>(<span class="st">&quot;~/Documents/Teaching/Bioinfo_workshops/gene_counts.tsv&quot;</span>, <span class="dt">sep =</span> <span class="st">&quot;</span><span class="ch">\t</span><span class="st">&quot;</span>,<span class="dt">row.names =</span> <span class="dv">1</span>, <span class="dt">header =</span> T)
+metadata &lt;-<span class="st"> </span><span class="kw">read.table</span>(<span class="st">&quot;~/Documents/Teaching/Bioinfo_workshops/metadata.tsv&quot;</span>, <span class="dt">sep =</span> <span class="st">&quot;</span><span class="ch">\t</span><span class="st">&quot;</span>, <span class="dt">header =</span> T)</code></pre></div>
 <p><strong>Note:</strong> It is important that by using <code>?read.table</code> command, you can see that there are many other arguments to this function that one can use to read in their file, the way they want. Like <code>skip</code> can for example be used to skip a certain number of lines from your file! This would be helpful, if you have a file with some comments in the beginning of a counts table for example!</p>
 <div id="looking-inside-a-dataframe" class="section level2">
 <h2><span class="header-section-number">2.1</span> Looking inside a dataframe</h2>
@@ -516,6 +516,24 @@ gene_set <span class="op">%in%</span><span class="st"> </span><span class="kw">r
 int_genes &lt;-<span class="st"> </span><span class="kw">row.names</span>(gene_counts) <span class="op">%in%</span><span class="st"> </span>gene_set
 int_genes_count &lt;-<span class="st"> </span>gene_counts[int_genes,]
 int_genes_count</code></pre></div>
+</div>
+<div id="subseting-data-frames-and-matriccs" class="section level2">
+<h2><span class="header-section-number">2.6</span> Subseting data frames and matriccs</h2>
+<ol style="list-style-type: decimal">
+<li>Subset the metadata corresponding to females or any other variable.</li>
+<li>Subste the count matrix based on new meta data for females.</li>
+</ol>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co">#subset the metadata</span>
+
+metadata_f &lt;-<span class="st"> </span>metadata[metadata<span class="op">$</span>Sex<span class="op">==</span><span class="st">&quot;F&quot;</span>, ]
+
+<span class="co"># Now extract the counts data specificaaly for females</span>
+gene_counts_f &lt;-<span class="st"> </span>gene_counts[, metadata_f<span class="op">$</span>Sample]
+
+
+## The above two operations can be combined like this
+
+gene_counts_f &lt;-<span class="st"> </span>gene_counts[, metadata[metadata<span class="op">$</span>Sex<span class="op">==</span><span class="st">&quot;F&quot;</span>, ]<span class="op">$</span>Sample]</code></pre></div>
 </div>
 </div>
 <div id="factors" class="section level1">
