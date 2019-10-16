@@ -22,6 +22,8 @@ If you want to use the R markdown files of the lectures and exercises, you can d
 
 You would need these two files [gene_counts][7] and [metadata][8]
 
+R markdown file for the exercise: [R-markdown file][9]
+
 Course organiser: Lokeshwaran Manoharan
 
 <span style="color:red"> **1300 to 1500:**</span>
@@ -65,3 +67,4 @@ Course organiser: *To Be Decided*
 [6]: Data/2019-10-15/R_exercise_Lokesh.html
 [7]: Data/2019-10-15/gene_counts.tsv
 [8]: Data/2019-10-15/metadata.tsv
+[9]: Data/2019-10-15/R_exercise_Lokesh.Rmd

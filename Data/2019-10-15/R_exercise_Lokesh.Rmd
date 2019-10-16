@@ -137,8 +137,8 @@ tolower(str_var3)
 You can generally import a `csv` or `tsv` file into the R environment using `read.table` command. This would automatically create a datatype called `data.frame` that stores information from a matrix (like an excel sheet) in a structured way! 
 
 ```{r, eval=FALSE}
-gene_counts <- read.table("~/Teaching/Bioinformatics_Workshop_ImmTech/Data/2019-10-15/gene_counts.tsv", sep = "\t",row.names = 1, header = T)
-metadata <- read.table("~/Teaching/Bioinformatics_Workshop_ImmTech/Data/2019-10-15/metadata.tsv", sep = "\t", header = T)
+gene_counts <- read.table("~/Documents/Teaching/Bioinfo_workshops/gene_counts.tsv", sep = "\t",row.names = 1, header = T)
+metadata <- read.table("~/Documents/Teaching/Bioinfo_workshops/metadata.tsv", sep = "\t", header = T)
 
 ```
 
@@ -269,6 +269,24 @@ int_genes_count <- gene_counts[int_genes,]
 int_genes_count
 ```
 
+## Subseting data frames and matriccs
+
+1. Subset the metadata corresponding to females or any other variable.
+2. Subste the count matrix based on new meta data for females.
+```{r, eval=FALSE}
+#subset the metadata
+
+metadata_f <- metadata[metadata$Sex=="F", ]
+
+# Now extract the counts data specificaaly for females
+gene_counts_f <- gene_counts[, metadata_f$Sample]
+
+
+## The above two operations can be combined like this
+
+gene_counts_f <- gene_counts[, metadata[metadata$Sex=="F", ]$Sample]
+
+```
 
 # Factors
 
@@ -315,6 +333,7 @@ boxplot(log2(gene_counts)) # why do you get warning?
 boxplot(log2(gene_counts + 1))
 
 ```
+
 
 
 
