@@ -20,6 +20,8 @@ If you want to use the R markdown files of the lectures and exercises, you can d
 
 ###### <span style="color:blue"> R basics (part II) at **406 Kitchen**</span> You can follow the lecture and exercises in html files here: [Lecture][5], [Exercises][6]
 
+You would need these two files [gene_counts][7] and [metadata][8]
+
 Course organiser: Lokeshwaran Manoharan
 
 <span style="color:red"> **1300 to 1500:**</span>
@@ -61,3 +63,5 @@ Course organiser: *To Be Decided*
 [4]: Data/2019-09-20/Introduction_workshop/Exercises.Rmd
 [5]: Data/2019-10-15/R_course_ImmunTech.pdf
 [6]: Data/2019-10-15/R_exercise_Lokesh.html
+[7]: Data/2019-10-15/gene_counts.tsv
+[8]: Data/2019-10-15/metadata.tsv
