@@ -12,7 +12,7 @@ The workshop commences on the 20th of September from 1300. The instrutions and t
 
 Course organiser: Sergio Mosquim Junior
 
-<span style="color:red"> **1300 to 1500:**</span> You can follow the lecture and exercises in html files here: [Lecture][1], [Exercises][2]
+<span style="color:red"> **1300 to 1500:**</span> You can find the lecture and exercises in html files here: [Lecture][1], [Exercises][2]
 
 If you want to use the R markdown files of the lectures and exercises, you can download it here: [Lecture in Rmarkdown file][3], [Exercises in Rmarkdown file][4]
 
@@ -22,7 +22,7 @@ If you want to use the R markdown files of the lectures and exercises, you can d
 
 Course organiser: Lokeshwaran Manoharan
 
-<span style="color:red"> **1300 to 1500:**</span> You can follow the lecture and exercises in html files here: [Lecture][5], [Exercises][6]
+<span style="color:red"> **1300 to 1500:**</span> You can find the lecture and exercises in html files here: [Lecture][5], [Exercises][6]
 
 You would need these two files [gene_counts][7] and [metadata][8]
 
@@ -32,11 +32,14 @@ R markdown file for the exercise: [R-markdown file][9]
 
 ###### <span style="color:blue"> Data Visualization in R at **Bioforum**</span>
 
-Course organiser: Jacob Willforss
+Course organiser: Jakob Willforss
 
-<span style="color:red"> **1300 to 1500:**</span>
+<span style="color:red"> **1300 to 1500:**</span> Lecture and exercises are available here: [Lecture][10], [Exercises][11]
 
-*Course materials will eventually be uploaded here*
+Optional data for the exercise (if not using your own): [Data matrix][12] [Design matrix][13]
+
+R markdown file for the exercise: [R-markdown file][14]
+
 
 ##### Tuesday 2019-NOV-05
 
@@ -66,3 +69,8 @@ Course organiser: *To Be Decided*
 [7]: Data/2019-10-15/gene_counts.tsv
 [8]: Data/2019-10-15/metadata.tsv
 [9]: Data/2019-10-15/R_exercise_Lokesh.Rmd
+[10]: Data/2019-10-21/presentation.pdf
+[11]: Data/2019-10-21/exercises.nb.html
+[12]: Data/2019-10-21/data/data_matrix.tsv
+[13]: Data/2019-10-21/data/design_matrix.tsv
+[14]: Data/2019-10-21/exercises.Rmd
