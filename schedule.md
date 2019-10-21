@@ -70,7 +70,7 @@ Course organiser: *To Be Decided*
 [8]: Data/2019-10-15/metadata.tsv
 [9]: Data/2019-10-15/R_exercise_Lokesh.Rmd
 [10]: Data/2019-10-21/presentation.pdf
-[11]: Data/2019-10-21/exercises.nb.html
+[11]: Data/2019-10-21/exercises.html
 [12]: Data/2019-10-21/data/data_matrix.tsv
 [13]: Data/2019-10-21/data/design_matrix.tsv
 [14]: Data/2019-10-21/exercises.Rmd

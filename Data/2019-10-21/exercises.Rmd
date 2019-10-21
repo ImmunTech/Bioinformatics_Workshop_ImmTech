@@ -253,90 +253,164 @@ We often want to study intensity levels of selected features. We first need to p
 
 ## Preparing illustration for single features
 
+First, we sort the data frame on the `P.Value` column and take a look at those with the highest and lowest p-value.
+
 ```{r}
-best_hit <- full_data_df[full_data_df$SYMBOL == "SH3BGRL2", ]
-best_hit_vals <- top_hit[, design_df$sample]
-
-
-#head(full_data_df %>% arrange(P.Value))
-
-#best_hit <- full_data_df[order(full_data_df$P.Value), ][1, ]
-#best_hit_vals <- best_hit[, as.character(design_df$sample)]
-
+head(arrange(data_df, P.Value))
+tail(arrange(data_df, P.Value))
 ```
+
+Next, we extract the top feature and put it in its own data frame. There are a few things going on here:
+
+* `data_df$External.IDs` gives us the column only with the external IDs
+* `data_df$External.IDs == "hum272"` will give us a long vector with TRUE/FALSE values (here only true for the "hum272" entry)
+* `data_df[data_df$External.IDs == "hum272", ]` here we select all rows that are true in the previous vector (in this case - only one)
+* `best_hit[, design_df$sample]` here `best_hit` is a single-row data frame. We subset it with the sample names from the design matrix so that we only have the values left.
+
+```{r}
+best_hit <- data_df[data_df$External.IDs == "hum272", ]
+best_hit_vals <- best_hit[, design_df$sample]
+print(best_hit)
+print(best_hit_vals)
+```
+
+**Exercise:** Take a closer look at the code. Make sure you understand how the data is extracted from the dataframe.
+
+**Exercise:** Do the same again but for the feature with the lowest p-value.
+
+The final step is to include these values in a new data frame. We use the `cbind` command
+to bind this value together with the design matrix. Now we have a data frame containing both
+the sample annotation information from the data frame and expression values for our feature of interest.
+
+* `unlist` - `best_hit_vals` is a single-row data frame. To bind it we need it as a vector, which `unlist` does for us.
+* `cbind` - "column bind", let's us bind one or many columns together (must have the same number of rows). The corresponding command for row-wise binding is `rbind`.
+
+```{r}
+best_hit_df <- cbind(value=unlist(best_hit_vals), design_df)
+head(best_hit_df)
+```
+
+**Exercise:** Bind the high-pvalue feature that you prepared before to the same data frame.
 
 ## Illustrating single features
 
+Now we are ready to study this feature. At the same time, it is a good time to try out some different geometics, and try using multiple geometics at once.
+
 ```{r}
-design_df
-
-unname(t(best_hit_vals))
-
-best_hit_df <- cbind(value=unname(t(best_hit_vals)), design_df)
-
-ggplot(best_hit_df, aes(x=as.factor(group), y=value)) + geom_point() + ggtitle("SH3BGRL2")
-ggplot(best_hit_df, aes(x=as.factor(group), y=value)) + geom_boxplot() + ggtitle("SH3BGRL2")
-ggplot(best_hit_df, aes(x=as.factor(group), y=value)) + geom_boxplot() + geom_point() + ggtitle("SH3BGRL2")
-ggplot(best_hit_df, aes(x=as.factor(group), y=value)) + geom_violin() + geom_point() + ggtitle("SH3BGRL2")
-
-ggplot(best_hit_df, aes(x=as.factor(group), y=value, color=MIPIcat)) + geom_boxplot() + geom_point(position=position_jitterdodge()) + ggtitle("SH3BGRL2")
-
-ggplot(best_hit_df, aes(x=as.factor(group), y=value, color=PFS_years)) + geom_boxplot() + geom_point(position=position_jitterdodge()) + ggtitle("SH3BGRL2")
-
-
+ggplot(best_hit_df, aes(x=as.factor(group), y=value)) + geom_point()
+ggplot(best_hit_df, aes(x=as.factor(group), y=value)) + geom_boxplot() + geom_point()
+ggplot(best_hit_df, aes(x=as.factor(group), y=value)) + geom_boxplot() + geom_point(aes(color=time), position=position_jitter(0.1), size=3)
 ```
 
+**Exercise:** Do the same illustrations using the high p-value feature. Can you relate the figure to the p-values you have obtained?
+
+**Exercise:** Try changing the coloring from "time" to "group" in the last plot. Does the results make sense?
+
+**Exercise:** Update the xlabel, ylabel and title to be more illustrative
+
+**Exercise:** Experiment with `position_jitter` setting. What happens if you change the value from `0.1` to `0.3`? To `0`? What happens if you change `position_jitter` to `position_jitter_dodge`? If you remove the entire argument?
+
+**Exercise:** Try assigning `aes(color=time)` inside the `geom_boxplot` call (in the last plot).
 
 # Preparing data in long format
 
 ## Wide vs. long formats
 
+`ggplot` generally expects to get the data in the so called "long format". This is different from the "wide format" we
+commonly used for expression matrices. Example of wide format, with one gene per row, and one sample per column:
+
+```
+gene   s1  s2  s3
+gene_A  4   5   3
+gene_B  3   2   3
+```
+
+The same matrix in long format:
+
+```
+gene   sample value
+gene_A     s1     4
+gene_A     s2     5
+gene_A     s3     3
+gene_B     s1     3
+gene_B     s2     2
+gene_B     s3     3
+```
+
+Here, all values are in one column, and we have a new column specifying to which sample they belong. Also notice that we have multiple rows for each gene (seen in the `gene` column). The long format is less pleasing for the human eye to look at, but makes it easier for `ggplot` as you only need to keep track of two columns to keep track of each sample and value.
+
+This conversion can be made using the tidyverse-command `pivot_longer`. Here, you specify:
+
+* The data frame to convert to long format
+* What columns to transform (in our case - the sample columns)
+* The names of the sample- and value-columns after conversion
+
+Non-sample columns will follow along similarly to the `gene` column in the small example above.
+
 ```{r}
-long_data <- full_data_df %>% pivot_longer(as.character(design_df$sample), names_to="sample", values_to="value")
+long_data <- pivot_longer(data_df, as.character(design_df$sample), names_to="sample", values_to="value")
+head(long_data)
+```
+
+**Exercise:** Inspect the `long_data` table using the commands `dim`, `str` and `head`. Compare it to the wide format `data_df` data frame.
+
+## Visualizing sample density distributions
+
+Having the data in long format we can now easily do sample-wide visualizations.
+
+For instance, we can do density plots to see how the values in each sample is distributed.
+
+```{r}
 ggplot(long_data, aes(x=value, color=sample)) + geom_density()
 ```
+
+It looks like we have a four outliers here! (seen shifted to the left). These will likely cause problems in our downstream analysis if not handled with care.
+
+## Adding sample-annotation to the long dataframe
 
 Often we want to color on different conditions to look for patterns in the data.
 Then we need to merge in out design matrix into this long data.
 
-This can be achieved using a `left_join` from the `dplyr` package.
+This can be achieved using a `left_join` from the `dplyr` package. Here, we specify the two matrices to merge, and which column we use for the merge.
 
 ```{r}
-annot_long_data <- long_data %>% left_join(design_df, by="sample")
+annot_long_data <- left_join(long_data, design_df, by="sample")
+head(annot_long_data)
 ```
 
-Now we can investigate patterns using the characteristics from the design matrix.
+**Exercise::** Inspect the `annot_long_data` data frame and compare it to the `long_data` matrix. Do you see how the design matrix got added? How many columns were added? How many columns are there in the design dataframe?
 
-Note that we need to add the argument `group` for ggplot to realize that each line
-comes from its own sample. Feel free to try what you get without the argument.
+## Density plots 
+
+Now we can use different characteristics found in the design matrix to study the sample densities. Note that we need to use the `group` aesthetics to separate the samples when using other colorings.
 
 ```{r}
 ggplot(annot_long_data, aes(x=value, color=time)) + geom_density()
 ggplot(annot_long_data, aes(x=value, color=time, group=sample)) + geom_density()
-ggplot(annot_long_data, aes(x=value, color=as.factor(group))) + geom_density()
-ggplot(annot_long_data, aes(x=value, color=group, group=sample)) + geom_density()
 ```
+
+**Exercise:** There are a lot of technical influence going on in this dataset. Can you spot the two batch effects by visually inspecting the figure?
+
+**Exercise:** Try coloring the figure on other sample characteristics found in the data frame. Can you spot which matches the pattern? Do you see why these samples are shifted this way?
 
 ## Boxplot or violins
 
-Using this we can easily make other plots such as boxplots or violins
+Now we can easily do boxplots and other illustrations of our samples.
+
+Here, we use the `theme` option to adjust the x-axis labels (`axis.text.x`) and to rotate them 90 degrees. We also adjust them to be nicely aligned with the ticks. The `theme` option is a powerful aspect of ggplot which lets you target in principle any aspects for the figures and change fonts, colorings, text orientations and much more.
 
 ```{r}
-box_plt <- ggplot(annot_long_data, aes(x=sample, y=value, color=time)) + 
+ggplot(annot_long_data, aes(x=sample, y=value, color=time)) + 
     geom_boxplot() + 
-    theme(axis.text.x = element_text(angle=90, hjust=1)) + 
+    theme(axis.text.x = element_text(angle=90, vjust=0.5)) + 
     ggtitle("Sample intensity levels")
-box_plt
-ggplot(annot_long_data, aes(x=sample, y=value, color=time)) + geom_violin()
 ```
 
-## Barplot
+**Exercise:** See if you can make a violin plot for the densities (tips: the geom for the violin plot is `geom_violin`).
 
-Illustration of total intensities in samples.
+**Exercise:** Try adjusting the `vjust` value. Do you see what is happening?
 
-```{r}
-ggplot(annot_long_data, aes(x=sample, y=value, fill=time, color=time, width=0.5)) + geom_col() + ylab("Total intensity") + theme(axis.text.x=element_text(angle=90))
-```
+**Challenge exercise:** See if you can rotate the y-axis labels.
 
 # Special topics
 
@@ -346,10 +420,11 @@ You often want to combine multiple plots
 
 ```{r}
 library(ggpubr)
-ggarrange(ma_plt, vulc_plt)
-ggarrange(ma_plt, vulc_plt, ncol=1)
-grid_plt <- ggarrange(ma_plt, vulc_plt, phist_plt, box_plt, common.legend = TRUE, legend = "right")
-annotated_plt <- annotate_figure(grid_plt, top="Illustrated dataset")
+dens1 <- ggplot(annot_long_data, aes(x=value, color=time)) + geom_density()
+dens2 <- ggplot(annot_long_data, aes(x=value, color=time, group=sample)) + geom_density()
+ggarrange(dens1, dens2)
+grid_plt <- ggarrange(dens1, dens2, common.legend = TRUE, legend = "right")
+annotated_plt <- annotate_figure(grid_plt, top="Grid title")
 annotated_plt
 ```
 
@@ -359,7 +434,7 @@ annotated_plt
 ggsave(annotated_plt, filename = "output_path.png")
 ```
 
-You can specify the measures, 
+You can specify the measures, and the resolution.
 
 ```{r}
 ggsave(annotated_plt, filename = "output_path_highres.png", width=10, height=10, dpi = 300)
@@ -410,9 +485,11 @@ library(PCAtools)
 # Biplots for different components and colorings
 # Pairplot
 
-data_df_no_missing <- data_df[complete.cases(data_df), ]
+data_only <- data_df[, design_df$sample]
 
-p <- pca(data_df_no_missing, removeVar=0.1, scale=TRUE, metadata=as.matrix(design_df))
+data_only_no_missing <- data_only[complete.cases(data_only), ]
+
+p <- pca(data_only_no_missing, removeVar=0.1, scale=TRUE, metadata=as.matrix(design_df))
 biplot(p, colby = "group")
 biplot(p, colby = "time")
 biplot(p, colby = "time", shape="group", legendPosition = "right")
@@ -422,14 +499,6 @@ screeplot(p)
 pairsplot(p, colby = "group")
 pairsplot(p, colby = "time")
 ```
-
-
-
-
-
-
-
-
 
 
 

@@ -1,19 +1,19 @@
-sample	group	time
-dil9_5	g9	late
-dil9_4	g9	late
-dil8_1	g8	late
-dil8_2	g8	late
-dil8_3	g8	late
-dil9_3	g9	late
-dil8_5	g8	late
-dil8_4	g8	late
-dil9_2	g9	late
-dil9_1	g9	late
-dil8_6	g8	early
-dil9_6	g9	early
-dil8_7	g8	early
-dil9_7	g9	early
-dil8_8	g8	early
-dil9_8	g9	early
-dil8_9	g8	early
-dil9_9	g9	early
+sample	group	time	dilution
+dil9_5	g9	late	high
+dil9_4	g9	late	high
+dil8_1	g8	late	high
+dil8_2	g8	late	high
+dil8_3	g8	late	high
+dil9_3	g9	late	high
+dil8_5	g8	late	low
+dil8_4	g8	late	low
+dil9_2	g9	late	low
+dil9_1	g9	late	low
+dil8_6	g8	early	high
+dil9_6	g9	early	high
+dil8_7	g8	early	high
+dil9_7	g9	early	high
+dil8_8	g8	early	high
+dil9_8	g9	early	high
+dil8_9	g8	early	high
+dil9_9	g9	early	high
