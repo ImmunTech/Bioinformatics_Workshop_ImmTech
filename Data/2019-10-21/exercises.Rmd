@@ -1,0 +1,437 @@
+---
+title: "Visualize expression data in R"
+author: "Jakob Willforss"
+date: "October 21, 2019"
+output: 
+  rmarkdown::html_document:
+    code_folding: 'show'
+    toc: true
+    toc_float: true
+    smart: true
+    number_sections: true
+    highlight: tango
+    self_contained: true
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+```{r wrap-hook, include=FALSE}
+# Ignore this part! This is only for formatting this document in the html file!
+library(knitr)
+hook_output = knit_hooks$get('output')
+knit_hooks$set(output = function(x, options) {
+  # this hook is used only when the linewidth option is not NULL
+  if (!is.null(n <- options$linewidth)) {
+    x = knitr:::split_lines(x)
+    # any lines wider than n should be wrapped
+    if (any(nchar(x) > n)) x = strwrap(x, width = n)
+    x = paste(x, collapse = '\n')
+  }
+  hook_output(x, options)
+})
+```
+
+# Introduction
+
+This exercise assumes that you are working with two matrices:
+
+* A data matrix containing expression data from multiple samples, with optional annotation columns (can be microarray, RNA-seq, quantitative proteomics)
+* A design matrix with the sample column names in one column and sample annotations in the remaining
+
+Example data matrix:
+
+```
+pep  RT   s1_1 s1_2 s1_3 s2_1 s2_2 s2_3
+ATCA 40.3 20.1 20.2 19.5 22.3 22.5 21.9
+GCC  43.0 20.3 19.8 19.5 21.7 21.9 21.2
+```
+
+Example design matrix:
+
+```
+sample  group  other
+s1_1    1      batch1
+s1_2    1      batch1
+s1_3    1      batch2
+s2_1    2      batch2
+s2_2    2      batch2
+s2_3    2      batch1
+```
+
+Note how the entries in the sample column all are present in the data matrix.
+
+You can either use your own data, or download a template dataset:
+
+* Download data matrix
+* Download design matrix
+
+## Required packages
+
+In order to fully run this exercise, please make sure that you have the tidyverse package installed. This package includes `ggplot2` and `dplyr` which both are used in this exercise.
+
+```{r}
+# Load the tidyverse package
+library(tidyverse)
+```
+
+## Preprocessing the data
+
+If using your own data you need to calculate basic statistics before proceeding with the exercises. For this you could use NormalyzerDE. For small datasets you can run it from: `quantitativeproteomics.org/NormalyzerDE`. If your dataset is larger than 5 MB you could either subset it using the `head` command, run NormalyzerDE locally or ask contact Jakob for help processing it locally.
+
+# Loading data
+
+The file paths here assume that you have a folder `data` within your working directory with a data matrix named `data_matrix.tsv` and a design matrix named `design_matrix.tsv`. Please adjust the path and filename to the data you are using.
+
+```{r}
+data_fp <- "data/data_matrix.tsv"
+design_fp <- "data/design_matrix.tsv"
+
+# stringAsFactors - If not used, many columns are read as factors, which can be misinterpreted as integers
+data_df <- read.table(data_fp, sep="\t", header = TRUE, stringsAsFactors = FALSE)
+design_df <- read.table(design_fp, sep="\t", header = TRUE, stringsAsFactors = FALSE)
+
+# For reference: The above code can be replaced with the following from the readr package
+# full_data_df <- read_tsv(data_fp)
+# design_df <- read_tsv(design_fp)
+```
+
+## Investigate the data
+
+* `str`: Produces a brief summary of the object that is given to it
+* `head`: Retrieve the first `n` rows from a data.frame or matrix, where `n` here is specified to 10
+* `colnames`: Show the column names of the data frame (or matrix)
+
+**Exercise 1:** Inspect your data and make sure you understand what is present in the design- and the data matrix. Verify that the columns are in the format you expect them to be.
+
+```{r}
+str(design_df)
+head(design_df, 10)
+colnames(design_df)
+dim(design_df)
+
+str(data_df)
+head(data_df, 10)
+colnames(data_df)
+dim(data_df)
+```
+
+## Adding a 'significance' column
+
+This code adds new columns to the data matrix. These will contain TRUE or FALSE for each row depending on the p- or FDR-value was lower than a given threshold.
+
+**Exercise:** Add another column where you specified FDR values (adj.P.Val) lower than 0.05 and one with lower than 0.1. How many significant entries do you get in each case? 
+
+```{r}
+data_df$IsSig <- data_df$P.Value < 0.05
+data_df$IsFDRSig <- data_df$adj.P.Val < 0.2
+
+# Inspect the results
+head(data_df)
+# The table command summarizes what type of entries is present in a vector, and in which number
+table(data_df$IsSig)
+table(data_df$IsFDRSig)
+```
+
+# Visualize
+
+I personally dislike the gray background you get in the default ggplot-plots. There are a number of themes that can be assigned
+for different styles. Here, I assign the style `classic` as the global style.
+
+Check here for a selection of themes: https://ggplot2.tidyverse.org/reference/ggtheme.html
+
+```{r}
+theme_set(theme_classic())
+```
+
+## P-value histogram
+
+For further discussion on its interpretation, see the following link: http://varianceexplained.org/statistics/interpreting-pvalue-histogram/
+
+Special settings:
+
+* geom_histogram - Geometry specifying to do histograms, where we are cutting up a range of data in bins
+* bins - Specify how many segments the data should be separated in
+
+When running this you get a warning "Removed 43 rows containing non-finite values (stat_bin)". This is due to missing values in the dataset, and is not a problem.
+
+```{r}
+ggplot(data_df, aes(x=P.Value)) + geom_histogram(bins=100) 
+```
+
+This can easily be adjusted to other characteristics, such as expression or fold change:
+
+```{r}
+ggplot(data_df, aes(x=AvgExpr)) + geom_histogram(bins=100)
+```
+
+**Exercise:** Further explore the `data_df` matrix using the histogram. Use `colnames` to inspect what columns there are in the matrix. Try making histograms for different columns, and try to adjust the number of bins in the histogram using the `bins` option.
+
+## Using multiple aesthetics - coloring the histogram
+
+If you want to color those entries that pass your adjusted p-value threshold in a histogram, you can use the `fill` aesthetics. 
+
+Here, we want to highlight entries passing our assigned FDR threshold, which is specified in the column `IsFDRSig` that we created above.
+
+The `#AAAAAA` is hexcode and a way to specify colors. The pairs of letters specify the amount of red, green and blue respectively.
+
+```{r}
+gray_blue_colors <- c("#AAAAAA", "#0C81A2")
+
+ggplot(data_df, aes(x=P.Value, fill=IsFDRSig)) + geom_histogram(bins=100) + scale_fill_manual(values=gray_blue_colors)
+```
+
+**Exercise:** Try changing the selected colors (you can find choices at the following link: https://www.w3schools.com/colors/colors_picker.asp).
+
+**Exercise:** Try coloring based on other criteria than IsFDRSig (for instance IsSig)
+
+**Challenge exercise:** Color based on if a feature is upregulated or not (i.e. if its fold-change is higher or lower than 0).
+
+## Volcano plot
+
+The volcano plot gives a quick overview of the fold-changes and p-values within your dataset. The x-axis shows the log2-fold and the y-axis is rescaled p-values where the top ones are those with the lowest p-values.
+
+```{r}
+ggplot(data_df, aes(x=log2Fold, y=-log10(P.Value))) + geom_point()
+```
+
+You can color the significant hits here too, similarly to in the p-value histogram.
+
+```{r}
+ggplot(data_df, aes(x=log2Fold, y=-log10(P.Value), color=IsFDRSig)) + geom_point()
+```
+
+We can improve the visuals further by using the options:
+
+* alpha - Make the dots partially transparent
+* na.rm=TRUE - Omit the annoying warning message about NA values
+* ggtitle - Add a title to the plot
+* xlab / ylab - Custom axis-labels
+
+
+```{r}
+ggplot(data_df, aes(x=log2Fold, y=-log10(P.Value), color=IsFDRSig)) + 
+    geom_point(alpha=0.6, na.rm=TRUE) +
+    ggtitle("Fancy volcano plot") +
+    xlab("Fold regulation (log2)") +
+    ylab("Significance (-log10)") + 
+    scale_color_manual(values=gray_blue_colors)
+```
+
+**Exercise:** Try changing the x/y labels and the title
+
+**Exercise:** Try adjusting the coloring aesthetics. Use a different column for coloring. You could also switch the coloring scheme.
+
+**Thinking point:** When can we have a large fold change but still have a large p-value?
+
+**Challenge exercise:** Add labels to the significant features. Instructions on how to achieve this can be found here: https://www.gettinggeneticsdone.com/2016/01/repel-overlapping-text-labels-in-ggplot2.html
+
+## MA plot
+
+The MA plot is very similar to the vulcano plot, with the only difference what we are specifying as x-axis and y-axis.
+
+The command `arrange(data_df, desc(P.Value))` is a Tidyverse command for sorting a data frame. Here, they are sorting with the features with the lowest p-values at the bottom to make sure they are drawn on top.
+
+```{r}
+ggplot(arrange(data_df, desc(P.Value)), aes(x=AvgExpr, y=log2Fold, color=IsFDRSig)) + 
+    geom_point(alpha=0.6, na.rm=TRUE) +
+    ggtitle("MA") +
+    xlab("Expression level") +
+    ylab("Fold change (log2)") + 
+    scale_color_manual(values=gray_blue_colors)
+```
+
+**Exercise:** Take a look at the output from `arrange(data_df, desc(P.Value))`. Do you see what is going on if you compare it to the output from `data_df`?
+
+# Single feature illustrations
+
+We often want to study intensity levels of selected features. We first need to prepare the data in the right format and then we can perform various visualizations.
+
+`ggplot` expects the data to be in the so called 'tidy' format where one column contains the values, and the other columns contain information linked to that value. This is further discussed below in the "Preparing data in long format" section.
+
+## Preparing illustration for single features
+
+```{r}
+best_hit <- full_data_df[full_data_df$SYMBOL == "SH3BGRL2", ]
+best_hit_vals <- top_hit[, design_df$sample]
+
+
+#head(full_data_df %>% arrange(P.Value))
+
+#best_hit <- full_data_df[order(full_data_df$P.Value), ][1, ]
+#best_hit_vals <- best_hit[, as.character(design_df$sample)]
+
+```
+
+## Illustrating single features
+
+```{r}
+design_df
+
+unname(t(best_hit_vals))
+
+best_hit_df <- cbind(value=unname(t(best_hit_vals)), design_df)
+
+ggplot(best_hit_df, aes(x=as.factor(group), y=value)) + geom_point() + ggtitle("SH3BGRL2")
+ggplot(best_hit_df, aes(x=as.factor(group), y=value)) + geom_boxplot() + ggtitle("SH3BGRL2")
+ggplot(best_hit_df, aes(x=as.factor(group), y=value)) + geom_boxplot() + geom_point() + ggtitle("SH3BGRL2")
+ggplot(best_hit_df, aes(x=as.factor(group), y=value)) + geom_violin() + geom_point() + ggtitle("SH3BGRL2")
+
+ggplot(best_hit_df, aes(x=as.factor(group), y=value, color=MIPIcat)) + geom_boxplot() + geom_point(position=position_jitterdodge()) + ggtitle("SH3BGRL2")
+
+ggplot(best_hit_df, aes(x=as.factor(group), y=value, color=PFS_years)) + geom_boxplot() + geom_point(position=position_jitterdodge()) + ggtitle("SH3BGRL2")
+
+
+```
+
+
+# Preparing data in long format
+
+## Wide vs. long formats
+
+```{r}
+long_data <- full_data_df %>% pivot_longer(as.character(design_df$sample), names_to="sample", values_to="value")
+ggplot(long_data, aes(x=value, color=sample)) + geom_density()
+```
+
+Often we want to color on different conditions to look for patterns in the data.
+Then we need to merge in out design matrix into this long data.
+
+This can be achieved using a `left_join` from the `dplyr` package.
+
+```{r}
+annot_long_data <- long_data %>% left_join(design_df, by="sample")
+```
+
+Now we can investigate patterns using the characteristics from the design matrix.
+
+Note that we need to add the argument `group` for ggplot to realize that each line
+comes from its own sample. Feel free to try what you get without the argument.
+
+```{r}
+ggplot(annot_long_data, aes(x=value, color=time)) + geom_density()
+ggplot(annot_long_data, aes(x=value, color=time, group=sample)) + geom_density()
+ggplot(annot_long_data, aes(x=value, color=as.factor(group))) + geom_density()
+ggplot(annot_long_data, aes(x=value, color=group, group=sample)) + geom_density()
+```
+
+## Boxplot or violins
+
+Using this we can easily make other plots such as boxplots or violins
+
+```{r}
+box_plt <- ggplot(annot_long_data, aes(x=sample, y=value, color=time)) + 
+    geom_boxplot() + 
+    theme(axis.text.x = element_text(angle=90, hjust=1)) + 
+    ggtitle("Sample intensity levels")
+box_plt
+ggplot(annot_long_data, aes(x=sample, y=value, color=time)) + geom_violin()
+```
+
+## Barplot
+
+Illustration of total intensities in samples.
+
+```{r}
+ggplot(annot_long_data, aes(x=sample, y=value, fill=time, color=time, width=0.5)) + geom_col() + ylab("Total intensity") + theme(axis.text.x=element_text(angle=90))
+```
+
+# Special topics
+
+## Making a multi-pane plot
+
+You often want to combine multiple plots
+
+```{r}
+library(ggpubr)
+ggarrange(ma_plt, vulc_plt)
+ggarrange(ma_plt, vulc_plt, ncol=1)
+grid_plt <- ggarrange(ma_plt, vulc_plt, phist_plt, box_plt, common.legend = TRUE, legend = "right")
+annotated_plt <- annotate_figure(grid_plt, top="Illustrated dataset")
+annotated_plt
+```
+
+## Saving plots to file
+
+```{r}
+ggsave(annotated_plt, filename = "output_path.png")
+```
+
+You can specify the measures, 
+
+```{r}
+ggsave(annotated_plt, filename = "output_path_highres.png", width=10, height=10, dpi = 300)
+```
+
+# Special cases
+
+## Heatmaps
+
+Source: https://learnr.wordpress.com/2010/01/26/ggplot2-quick-heatmap-plotting/
+Source for base R: https://www.r-graph-gallery.com/heatmap
+
+Heatmaps can be done in ggplot using `geom_tile()`, but in this particular case
+I would recommend using the base R version due to its clustering of the entries.
+
+```{r}
+library(tidyverse)
+
+heatmap(data_df %>% head(100) %>% dplyr::select(design_df$sample) %>% as.matrix() %>% na.omit())
+
+colnames(data_df) <- make.names(colnames(data_df))
+out <- data_df %>%
+    arrange(P.Value) %>% 
+    head(10) %>% 
+    pivot_longer(as.character(design_df$sample), names_to="sample", values_to="value") %>% 
+    filter(!is.na(value))
+head(out)
+
+ggplot(out, aes(sample, External.IDs)) + 
+    geom_tile(aes(fill=value)) + 
+    theme(axis.text.x = element_text(angle=90, vjust=0.5))
+
+```
+
+## Principal component analysis
+
+There are many ways to do principal component analysis visualizations in R.
+The one I find easiest to use is the `PCAtools` package.
+
+Here is a nice vignette for more extensive examples: https://bioconductor.org/packages/release/bioc/vignettes/PCAtools/inst/doc/PCAtools.html
+
+* removeVar - Removing highly variant features to get a better view of trends
+* scale - Whether all dimensions should be scaled to same size range before calculating importance
+
+```{r fig.width=10,fig.height=10}
+library(PCAtools)
+
+# Biplots for different components and colorings
+# Pairplot
+
+data_df_no_missing <- data_df[complete.cases(data_df), ]
+
+p <- pca(data_df_no_missing, removeVar=0.1, scale=TRUE, metadata=as.matrix(design_df))
+biplot(p, colby = "group")
+biplot(p, colby = "time")
+biplot(p, colby = "time", shape="group", legendPosition = "right")
+
+screeplot(p)
+
+pairsplot(p, colby = "group")
+pairsplot(p, colby = "time")
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
