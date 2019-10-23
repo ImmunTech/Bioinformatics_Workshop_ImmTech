@@ -40,6 +40,7 @@ Optional data for the exercise (if not using your own): [Data matrix][12] [Desig
 
 R markdown file for the exercise: [R-markdown file][14]
 
+Lecture recordings are found at following links: [Part1](https://lu.box.com/s/7c13ngyrc2ych35oq1sdq22pojwoovn3), [Part2](https://lu.box.com/s/jdar8f87muq3oeeslixq0u9p8vjiejv7)
 
 ##### Tuesday 2019-NOV-05
 
