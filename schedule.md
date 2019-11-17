@@ -42,13 +42,17 @@ R markdown file for the exercise: [R-markdown file][14]
 
 Lecture recordings are found at following links: [Part1](https://lu.box.com/s/7c13ngyrc2ych35oq1sdq22pojwoovn3), [Part2](https://lu.box.com/s/jdar8f87muq3oeeslixq0u9p8vjiejv7)
 
-##### Tuesday 2019-NOV-05
+##### Tuesday 2019-NOV-18
 
 ###### <span style="color:blue"> Basic statistics in R at **Bioforum**</span>
 
 Course organiser: Ashfaq Ali
 
 <span style="color:red"> **1500 to 1700:**</span>
+
+html file for the tutorial: [tutorial][15]
+
+R markdown file for the exercise: [R-markdown file][16]
 
 *Course materials will eventually be uploaded here*
 
@@ -75,3 +79,5 @@ Course organiser: *To Be Decided*
 [12]: Data/2019-10-21/data/data_matrix.tsv
 [13]: Data/2019-10-21/data/design_matrix.tsv
 [14]: Data/2019-10-21/exercises.Rmd
+[15]: Data/2019-11-18/Basic_statistics_tutorial.html
+[16]: Data/2019-11-18/Basic_statistics_tutorial.Rmd
