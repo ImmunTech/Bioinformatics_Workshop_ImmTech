@@ -13,7 +13,7 @@
 <meta name="progressive" content="false" />
 <meta name="allow-skip" content="false" />
 
-<title>Tutorial: Basic statitics in R</title>
+<title>Tutorial: Basic statistics in R</title>
 
 
 <!-- highlightjs -->
@@ -44,11 +44,11 @@ if (window.hljs && document.readyState && document.readyState === "complete") {
 
 <div class="topics">
 
-<div id="section-a-quick-catchup-and-practice-for-previous-sessions" class="section level2">
-<h2>A quick catchup and practice for previous sessions</h2>
+<div id="section-a-quick-catch-up-and-practice-for-previous-sessions" class="section level2">
+<h2>A quick catch up and practice for previous sessions</h2>
 <div id="section-data-import-export-generation-vectors-matrices-and-data-frames" class="section level3">
 <h3>Data: Import, Export, Generation, vectors, matrices and data frames</h3>
-<p>For this session we will use Gene counts data from Lokesh given in the previous session. You can download tthe data here <a href="https://immuntech.github.io/Bioinformatics_Workshop_ImmTech/Data/2019-10-15/gene_counts.tsv">genes</a> and <a href="https://immuntech.github.io/Bioinformatics_Workshop_ImmTech/Data/2019-10-15/metadata.tsv">metadata</a>.</p>
+<p>For this session we will use Gene counts data from Lokesh given in the previous session. You can download the data here <a href="https://immuntech.github.io/Bioinformatics_Workshop_ImmTech/Data/2019-10-15/gene_counts.tsv">genes</a> and <a href="https://immuntech.github.io/Bioinformatics_Workshop_ImmTech/Data/2019-10-15/metadata.tsv">metadata</a>.</p>
 <p>Please load the data into R.</p>
 <pre class="r"><code># Please type the correct path to where you save your data files.
 
@@ -81,13 +81,13 @@ head(gen_counts, 3)</code></pre>
 <div id="section-accessing-parts-of-the-data" class="section level3">
 <h3>Accessing parts of the data</h3>
 <p><strong>Using indices</strong></p>
-<p>Accessing parts of the data in R can be done in different ways. Lets start by using <code>data[ , ]</code> to extract parts of the data. Use left side of the comma for rows and right side of the comma for cloumns.</p>
+<p>Accessing parts of the data in R can be done in different ways. Lets start by using <code>data[ , ]</code> to extract parts of the data. Use left side of the comma for rows and right side of the comma for columns.</p>
 <pre class="r"><code>gen_counts[ 1:10, ]
 gen_counts[ 1:10, 1:10]
 gen_counts[ , 1:10]</code></pre>
 <p>Note that if you leave either side of the comma as blank, r assumes that you meant all data in that dimension should be selected.</p>
 <p><strong>Using names</strong></p>
-<p>Lets say you are only interested in certain samples and you want to extract those by names. Lets create a vector of samples you are interested in. To extract the samples from your data simply write the name of the vector on the right side of the comma in the square barckets <code>[ , ]</code>.</p>
+<p>Lets say you are only interested in certain samples and you want to extract those by names. Lets create a vector of samples you are interested in. To extract the samples from your data simply write the name of the vector on the right side of the comma in the square brackets <code>[ , ]</code>.</p>
 <pre class="r"><code>## Create a vector of samples you are interested in
 samples &lt;- c(&quot;Sample_13&quot; , &quot;Sample_9&quot; , &quot;Sample_4&quot; , &quot;Sample_14&quot; , &quot;Sample_12&quot;)
 
@@ -98,7 +98,7 @@ gen_counts[ 1:3, samples]</code></pre>
 ## TMEM240         0       46        0         0         0
 ## MT-CO1          0      209        0       276       113
 ## ADGRG6          0        0        0         9         0</code></pre>
-<p>And similarly, to extract you favurite genes by names use following examples.</p>
+<p>And similarly, to extract you favorite genes by names use following examples.</p>
 <pre class="r"><code>genes &lt;- c(&quot;BMS1&quot; , &quot;SYNC&quot; , &quot;NFIB&quot; , &quot;RAB11FIP3&quot; , &quot;COG1&quot; , &quot;C5orf38&quot; , &quot;FAM126B&quot; ,   &quot;SUCLA2&quot; , &quot;SCN4A&quot; , &quot;CISD1&quot;  )
 
 head(gen_counts[genes,],3)</code></pre>
@@ -117,23 +117,23 @@ head(gen_counts[genes,],3)</code></pre>
 </div>
 <div id="section-save-the-extracted-data" class="section level3">
 <h3>Save the extracted data</h3>
-<p>So far we have only printer the extracted data in the consol, this is not very useful if we want to use the extracted data for further analyses. Let us store this data in the “environment” by using <code>&lt;-</code> or <code>=</code> signs and write it to a file with <code>write.table()</code> function.</p>
+<p>So far we have only printer the extracted data in the console, this is not very useful if we want to use the extracted data for further analyses. Let us store this data in the “environment” by using <code>&lt;-</code> or <code>=</code> signs and write it to a file with <code>write.table()</code> function.</p>
 <pre class="r"><code>gen_counts_part &lt;- gen_counts[genes, ] 
 
 write.table(x = gen_counts_part, file = &quot;~/Documents/GitHub/Bioinformatics_Workshop_ImmTech/Data/2019-11-18/data/part_gene_counts.tsv&quot;, row.names = TRUE, col.names = TRUE)</code></pre>
-<p>So far we have consolidated our knowledge on how to load, access, subset and save data. This is going to be uesfule in later session.</p>
+<p>So far we have consolidated our knowledge on how to load, access, subset and save data. This is going to be useful in later session.</p>
 </div>
 </div>
-<div id="section-functional-programing" class="section level2">
-<h2>Functional programing</h2>
-<p>R is a <strong>Functional Language</strong> and there is a lot of help available. For almost all necessary data analyses tasks, there are functions available. Most of these functions are well written and have good documentation on how to use them. Often R functions are bundeled in packages. An example of a package is <code>ggplot2</code> that is developed for plotting purpose. There are plenty more such as <code>limma</code> for analyses of microarray data. There are handy functions to find out what these packages and functions do. We would take a look at how to get help on packages, functions and data types.</p>
+<div id="section-functional-programming" class="section level2">
+<h2>Functional programming</h2>
+<p>R is a <strong>Functional Language</strong> and there is a lot of help available. For almost all necessary data analyses tasks, there are functions available. Most of these functions are well written and have good documentation on how to use them. Often R functions are bundled in packages. An example of a package is <code>ggplot2</code> that is developed for plotting purpose. There are plenty more such as <code>limma</code> for analyses of micro array data. There are handy functions to find out what these packages and functions do. We would take a look at how to get help on packages, functions and data types.</p>
 <p>To know more about packages, lets look at the Vignettes of ggplot2 package in R by using function call <code>browseVignettes(&quot;ggplot2&quot;)</code>.</p>
 <pre class="r"><code>browseVignettes(&quot;ggplot2&quot;)</code></pre>
 <p>And to get help on <code>ggplot()</code> function lets use <code>?</code>. Or <code>t.test()</code> or <code>lm()</code>.</p>
 <pre class="r"><code>?ggplot
 ?t.test
 ?lm</code></pre>
-<p>If you wnat to know what methods are available for your type of data, you can use <code>methods</code> founction as following.</p>
+<p>If you want to know what methods are available for your type of data, you can use <code>methods</code> function as following.</p>
 <pre class="r"><code># For matrix class
 methods(class = &quot;matrix&quot;)
 
@@ -142,8 +142,8 @@ methods(class = &quot;data.frame&quot;)</code></pre>
 </div>
 <div id="section-descriptive-statistics" class="section level2">
 <h2>Descriptive statistics</h2>
-<p>There are several convinience functions and packages available for descriptive statitiscts and analyses in R. We will use some of these and try to apply them on our genes data.</p>
-<p>To get values such as mean, standard deviation, variance, min, max, median etc. R has implemented functions in the base package. This packgae is automatically loaded in R when you start the program R or RStudion.</p>
+<p>There are several convenience functions and packages available for descriptive statistics and analyses in R. We will use some of these and try to apply them on our genes data.</p>
+<p>To get values such as mean, standard deviation, variance, min, max, median etc. R has implemented functions in the base package. This package is automatically loaded in R when you start the program R or Studio.</p>
 <p>Lets say we want obtain the mean of the fist sample we can use <code>rowMeans()</code> and <code>colMeans()</code> as following.</p>
 <pre class="r"><code># means on selection of samples
 colMeans(gen_counts[,samples])</code></pre>
@@ -157,9 +157,9 @@ rowMeans(gen_counts[genes,samples])</code></pre>
 ##    SUCLA2     SCN4A     CISD1 
 ##      53.0      53.4       0.0</code></pre>
 <p>Similarly, we can apply the same other descriptive statistical functions such as <code>rowVars()</code> or <code>colVars()</code> for variances of rows and columns respectively.</p>
-<p><strong>Try to use <code>rowsd, rowMax, rowMin</code> etc. to get an idea of the functions available for descriptive statitics.</strong></p>
-<p>If there is a particulr function you are interested in, ask one of the TAs or brown R related webpages.</p>
-<p><strong><em>Mean, Median, Varinace, Standard Deviation, Quantiles, counts, log2, log10, Exponentials</em></strong></p>
+<p><strong>Try to use <code>rowsd, rowMax, rowMin</code> etc. to get an idea of the functions available for descriptive statistics.</strong></p>
+<p>If there is a particular function you are interested in, ask one of the TAs or brown R related webpages.</p>
+<p><strong><em>Mean, Median, Variance, Standard Deviation, Quantiles, counts, log2, log10, Exponential</em></strong></p>
 </div>
 <div id="section-t-test" class="section level2">
 <h2>t test</h2>
@@ -202,7 +202,7 @@ t_res</code></pre>
 ##  $ method     : chr &quot;Welch Two Sample t-test&quot;
 ##  $ data.name  : chr &quot;gen_counts[1, healthy] and gen_counts[1, ill]&quot;
 ##  - attr(*, &quot;class&quot;)= chr &quot;htest&quot;</code></pre>
-<p>We can extract desired output such as p value, means of groups etc. from this object by using <code>$</code> opertator.</p>
+<p>We can extract desired output such as p value, means of groups etc. from this object by using <code>$</code> operator.</p>
 <pre class="r"><code>t_res$p.value</code></pre>
 <pre><code>## [1] 0.255458</code></pre>
 <p>Try to extract confidence intervals from the same object.</p>
@@ -213,14 +213,14 @@ t_res</code></pre>
 <pre class="r"><code>apply(gen_counts,1,function(x) t.test(x[healthy], x[ill]))</code></pre>
 <p>For nicer output lets try to access p-values.</p>
 <pre class="r"><code>apply(gen_counts,1,function(x) t.test(x[healthy], x[ill])$p.value)</code></pre>
-<p>And confidence intervals by using follwoing code.</p>
+<p>And confidence intervals by using following code.</p>
 <pre class="r"><code>apply(gen_counts,1,function(x) t.test(x[healthy], x[ill])$estimate[1])
 apply(gen_counts,1,function(x) t.test(x[healthy], x[ill])$estimate[2])</code></pre>
 <p><strong>Can you extract group means?</strong></p>
 </div>
 <div id="section-linear-regression" class="section level2">
 <h2>Linear regression</h2>
-<p>Similar to t.test, one can also apply linear regression on a single gene. TAke a look at some examples on how to extract output from the models. use <code>?lm</code> and <code>methods(class=&quot;lm&quot;)</code> to know more about what you can extract from linear model fit.</p>
+<p>Similar to t.test, one can also apply linear regression on a single gene. Take a look at some examples on how to extract output from the models. use <code>?lm</code> and <code>methods(class=&quot;lm&quot;)</code> to know more about what you can extract from linear model fit.</p>
 <pre class="r"><code> # Outcome
 y&lt;-pheno$Age
 
@@ -294,7 +294,7 @@ learnr:::register_http_handlers(session, metadata = NULL)
 
 <!-- begin doc-metadata -->
 <div id="doc-metadata">
-<h2 class="title toc-ignore" style="display:none;">Tutorial: Basic statitics in R</h2>
+<h2 class="title toc-ignore" style="display:none;">Tutorial: Basic statistics in R</h2>
 </div>
 <!-- end doc-metadata -->
 

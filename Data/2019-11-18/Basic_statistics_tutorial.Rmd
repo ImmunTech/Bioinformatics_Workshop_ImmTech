@@ -1,8 +1,9 @@
 ---
-title: "Tutorial: Basic statitics in R"
+title: "Tutorial: Basic statistics in R"
 output: learnr::tutorial
 runtime: shiny_prerendered
 ---
+
 
 ```{r setup, include=FALSE}
 library(learnr)
@@ -10,12 +11,12 @@ knitr::opts_chunk$set(echo = TRUE)
 ```
 
 
-## A quick catchup and practice for previous sessions
+## A quick catch up and practice for previous sessions
 
 ### Data: Import, Export, Generation, vectors, matrices and data frames
  
   
-For this session we will use Gene counts data from Lokesh given in the previous session. You can download tthe data here [genes](https://immuntech.github.io/Bioinformatics_Workshop_ImmTech/Data/2019-10-15/gene_counts.tsv) and [metadata](https://immuntech.github.io/Bioinformatics_Workshop_ImmTech/Data/2019-10-15/metadata.tsv).
+For this session we will use Gene counts data from Lokesh given in the previous session. You can download the data here [genes](https://immuntech.github.io/Bioinformatics_Workshop_ImmTech/Data/2019-10-15/gene_counts.tsv) and [metadata](https://immuntech.github.io/Bioinformatics_Workshop_ImmTech/Data/2019-10-15/metadata.tsv).
 
 Please load the data into R.
 ```{r, eval=TRUE}
@@ -45,7 +46,7 @@ head(gen_counts==0)
 
 **Using indices**
 
-Accessing parts of the data in R can be done in different ways. Lets start by using `data[ , ]` to extract parts of the data. Use left side of the comma for rows and right side of the comma for cloumns. 
+Accessing parts of the data in R can be done in different ways. Lets start by using `data[ , ]` to extract parts of the data. Use left side of the comma for rows and right side of the comma for columns. 
 
 ```{r, eval=FALSE}
 gen_counts[ 1:10, ]
@@ -58,7 +59,7 @@ Note that if you leave either side of the comma as blank, r assumes that you mea
 **Using names**
 
 Lets say you are only interested in certain samples and you want to extract those by names. 
-Lets create a vector of samples you are interested in. To extract the samples from your data simply write the name of the vector on the right side of the comma in the square barckets `[ , ]`.
+Lets create a vector of samples you are interested in. To extract the samples from your data simply write the name of the vector on the right side of the comma in the square brackets `[ , ]`.
 
 ```{r, eval=TRUE}
 ## Create a vector of samples you are interested in
@@ -70,7 +71,7 @@ gen_counts[ 1:3, samples]
 
 ```
 
-And similarly, to extract you favurite genes by names use following examples.
+And similarly, to extract you favorite genes by names use following examples.
 
 ```{r, eval=TRUE}
 genes <- c("BMS1" , "SYNC" , "NFIB" , "RAB11FIP3" , "COG1" , "C5orf38" , "FAM126B" ,   "SUCLA2" , "SCN4A" , "CISD1"  )
@@ -81,7 +82,7 @@ head(gen_counts[genes,],3)
 
 ### Save the extracted data
 
-So far we have only printer the extracted data in the consol, this is not very useful if we want to use the extracted data for further analyses. Let us store this data in the "environment" by using `<-` or `=` signs and write it to a file with `write.table()` function.
+So far we have only printer the extracted data in the console, this is not very useful if we want to use the extracted data for further analyses. Let us store this data in the "environment" by using `<-` or `=` signs and write it to a file with `write.table()` function.
 
 ```{r, eval=FALSE}
 gen_counts_part <- gen_counts[genes, ] 
@@ -91,13 +92,13 @@ write.table(x = gen_counts_part, file = "~/Documents/GitHub/Bioinformatics_Works
 ```
 
 
-So far we have consolidated our knowledge on how to load, access, subset and save data. This is going to be uesfule in later session.
+So far we have consolidated our knowledge on how to load, access, subset and save data. This is going to be useful in later session.
 
 
 
-## Functional programing
+## Functional programming
 
-R is a **Functional Language** and there is a lot of help available. For almost all necessary data analyses tasks, there are functions available. Most of these functions are well written and have good documentation on how to use them. Often R functions are bundeled in packages. An example of a package is `ggplot2` that is developed for plotting purpose. There are plenty more such as `limma` for analyses of microarray data. There are handy functions to find out what these packages and functions do.
+R is a **Functional Language** and there is a lot of help available. For almost all necessary data analyses tasks, there are functions available. Most of these functions are well written and have good documentation on how to use them. Often R functions are bundled in packages. An example of a package is `ggplot2` that is developed for plotting purpose. There are plenty more such as `limma` for analyses of micro array data. There are handy functions to find out what these packages and functions do.
 We would take a look at how to get help on packages, functions and data types.
 
 To know more about packages, lets look at the Vignettes of ggplot2 package in R by using function call `browseVignettes("ggplot2")`.
@@ -115,7 +116,7 @@ And to get help on `ggplot()` function lets use `?`. Or `t.test()` or `lm()`.
 ?lm
 ```
 
-If you wnat to know what methods are available for your type of data, you can use `methods` founction as following. 
+If you want to know what methods are available for your type of data, you can use `methods` function as following. 
 
 ```{r, eval=FALSE}
 # For matrix class
@@ -129,9 +130,9 @@ methods(class = "data.frame")
 
 ## Descriptive statistics
 
-There are several convinience functions and packages available for descriptive statitiscts and analyses in R. We will use some of these and try to apply them on our genes data.
+There are several convenience functions and packages available for descriptive statistics and analyses in R. We will use some of these and try to apply them on our genes data.
 
-To get values such as mean, standard deviation, variance, min, max, median etc. R has implemented functions in the base package. This packgae is automatically loaded in R when you start the program R or RStudion.
+To get values such as mean, standard deviation, variance, min, max, median etc. R has implemented functions in the base package. This package is automatically loaded in R when you start the program R or Studio.
 
 Lets say we want obtain the mean of the fist sample we can use `rowMeans()` and `colMeans()` as following.
 
@@ -149,11 +150,11 @@ rowMeans(gen_counts[genes,samples])
 
 Similarly, we can apply the same other descriptive statistical functions such as `rowVars()` or `colVars()` for variances of rows and columns respectively.
 
- **Try to use `rowsd, rowMax, rowMin` etc. to get an idea of the functions available for descriptive statitics.**
+ **Try to use `rowsd, rowMax, rowMin` etc. to get an idea of the functions available for descriptive statistics.**
 
-If there is a particulr function you are interested in, ask one of the TAs or brown R related webpages.
+If there is a particular function you are interested in, ask one of the TAs or brown R related webpages.
 
- ***Mean, Median, Varinace, Standard Deviation, Quantiles, counts, log2, log10, Exponentials***
+ ***Mean, Median, Variance, Standard Deviation, Quantiles, counts, log2, log10, Exponential***
     
 
 ## t test
@@ -177,7 +178,7 @@ Lets have a look at the output of the t_res object. First have a look at the obj
 str(t_res)
 ```
 
-We can extract desired output such as p value, means of groups etc. from this object by using `$` opertator.
+We can extract desired output such as p value, means of groups etc. from this object by using `$` operator.
 
 ```{r}
 t_res$p.value
@@ -199,7 +200,7 @@ For nicer output lets try to access p-values.
 apply(gen_counts,1,function(x) t.test(x[healthy], x[ill])$p.value)
 ```
 
-And confidence intervals by using follwoing code.
+And confidence intervals by using following code.
 
 ```{r, eval=FALSE}
 apply(gen_counts,1,function(x) t.test(x[healthy], x[ill])$estimate[1])
@@ -212,7 +213,7 @@ apply(gen_counts,1,function(x) t.test(x[healthy], x[ill])$estimate[2])
 
 ## Linear regression
 
-Similar to t.test, one can also apply linear regression on a single gene. TAke a look at some examples on how to extract output from the models. use `?lm` and `methods(class="lm")` to know more about what you can extract from linear model fit.
+Similar to t.test, one can also apply linear regression on a single gene. Take a look at some examples on how to extract output from the models. use `?lm` and `methods(class="lm")` to know more about what you can extract from linear model fit.
 
 ```{r, eval=TRUE}
  # Outcome
