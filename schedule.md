@@ -75,3 +75,4 @@ Course organiser: *To Be Decided*
 [12]: Data/2019-10-21/data/data_matrix.tsv
 [13]: Data/2019-10-21/data/design_matrix.tsv
 [14]: Data/2019-10-21/exercises.Rmd
+[15]: Data/2019-11-18/Basic_statistics_tutorial.html
