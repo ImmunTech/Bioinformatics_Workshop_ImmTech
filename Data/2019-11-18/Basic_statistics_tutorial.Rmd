@@ -1,0 +1,256 @@
+---
+title: "Tutorial: Basic statitics in R"
+output: learnr::tutorial
+runtime: shiny_prerendered
+---
+
+```{r setup, include=FALSE}
+library(learnr)
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+## A quick catchup and practice for previous sessions
+
+### Data: Import, Export, Generation, vectors, matrices and data frames
+ 
+  
+For this session we will use Gene counts data from Lokesh given in the previous session. You can download tthe data here [genes](https://immuntech.github.io/Bioinformatics_Workshop_ImmTech/Data/2019-10-15/gene_counts.tsv) and [metadata](https://immuntech.github.io/Bioinformatics_Workshop_ImmTech/Data/2019-10-15/metadata.tsv).
+
+Please load the data into R.
+```{r, eval=TRUE}
+
+# Please type the correct path to where you save your data files.
+
+gen_counts<-read.table("~/Documents/GitHub/Bioinformatics_Workshop_ImmTech/Data/2019-11-18/data/gene_counts.tsv")
+gen_counts <-as.matrix(gen_counts)
+pheno <- read.table("~/Documents/GitHub/Bioinformatics_Workshop_ImmTech/Data/2019-11-18/data/metadata.tsv", header = TRUE)
+```
+
+Have a look at the data by using `head()` function.
+
+```{r, eval=TRUE}
+# To look at the top three lines of the file use head()
+head(gen_counts, 3)
+head(pheno)
+```
+
+Try the `str()`, `summary()`, `dim()` just like head and see what it gives you.
+
+```{r, eval=FALSE, include=FALSE}
+head(gen_counts==0)
+```
+
+### Accessing parts of the data 
+
+**Using indices**
+
+Accessing parts of the data in R can be done in different ways. Lets start by using `data[ , ]` to extract parts of the data. Use left side of the comma for rows and right side of the comma for cloumns. 
+
+```{r, eval=FALSE}
+gen_counts[ 1:10, ]
+gen_counts[ 1:10, 1:10]
+gen_counts[ , 1:10]
+```
+
+Note that if you leave either side of the comma as blank, r assumes that you meant all data in that dimension should be selected.
+
+**Using names**
+
+Lets say you are only interested in certain samples and you want to extract those by names. 
+Lets create a vector of samples you are interested in. To extract the samples from your data simply write the name of the vector on the right side of the comma in the square barckets `[ , ]`.
+
+```{r, eval=TRUE}
+## Create a vector of samples you are interested in
+samples <- c("Sample_13" , "Sample_9" , "Sample_4" , "Sample_14" , "Sample_12")
+
+## To extract the samples 
+
+gen_counts[ 1:3, samples]
+
+```
+
+And similarly, to extract you favurite genes by names use following examples.
+
+```{r, eval=TRUE}
+genes <- c("BMS1" , "SYNC" , "NFIB" , "RAB11FIP3" , "COG1" , "C5orf38" , "FAM126B" ,   "SUCLA2" , "SCN4A" , "CISD1"  )
+
+head(gen_counts[genes,],3)
+
+```
+
+### Save the extracted data
+
+So far we have only printer the extracted data in the consol, this is not very useful if we want to use the extracted data for further analyses. Let us store this data in the "environment" by using `<-` or `=` signs and write it to a file with `write.table()` function.
+
+```{r, eval=FALSE}
+gen_counts_part <- gen_counts[genes, ] 
+
+write.table(x = gen_counts_part, file = "~/Documents/GitHub/Bioinformatics_Workshop_ImmTech/Data/2019-11-18/data/part_gene_counts.tsv", row.names = TRUE, col.names = TRUE)
+
+```
+
+
+So far we have consolidated our knowledge on how to load, access, subset and save data. This is going to be uesfule in later session.
+
+
+
+## Functional programing
+
+R is a **Functional Language** and there is a lot of help available. For almost all necessary data analyses tasks, there are functions available. Most of these functions are well written and have good documentation on how to use them. Often R functions are bundeled in packages. An example of a package is `ggplot2` that is developed for plotting purpose. There are plenty more such as `limma` for analyses of microarray data. There are handy functions to find out what these packages and functions do.
+We would take a look at how to get help on packages, functions and data types.
+
+To know more about packages, lets look at the Vignettes of ggplot2 package in R by using function call `browseVignettes("ggplot2")`.
+
+```{r, eval=FALSE}
+browseVignettes("ggplot2")
+```
+
+And to get help on `ggplot()` function lets use `?`. Or `t.test()` or `lm()`.
+
+
+```{r, eval=FALSE}
+?ggplot
+?t.test
+?lm
+```
+
+If you wnat to know what methods are available for your type of data, you can use `methods` founction as following. 
+
+```{r, eval=FALSE}
+# For matrix class
+methods(class = "matrix")
+
+# For data frames ()
+methods(class = "data.frame")
+```
+
+
+
+## Descriptive statistics
+
+There are several convinience functions and packages available for descriptive statitiscts and analyses in R. We will use some of these and try to apply them on our genes data.
+
+To get values such as mean, standard deviation, variance, min, max, median etc. R has implemented functions in the base package. This packgae is automatically loaded in R when you start the program R or RStudion.
+
+Lets say we want obtain the mean of the fist sample we can use `rowMeans()` and `colMeans()` as following.
+
+```{r}
+
+# means on selection of samples
+colMeans(gen_counts[,samples])
+
+# means of selection of rows and columns. 
+
+rowMeans(gen_counts[genes,samples])
+
+
+```
+
+Similarly, we can apply the same other descriptive statistical functions such as `rowVars()` or `colVars()` for variances of rows and columns respectively.
+
+ **Try to use `rowsd, rowMax, rowMin` etc. to get an idea of the functions available for descriptive statitics.**
+
+If there is a particulr function you are interested in, ask one of the TAs or brown R related webpages.
+
+ ***Mean, Median, Varinace, Standard Deviation, Quantiles, counts, log2, log10, Exponentials***
+    
+
+## t test
+
+ To apply `t.test()` in R we can first look at the help by typing `?t.test`
+
+```{r eval=TRUE}
+healthy <- pheno[pheno$Healthy=="yes", ]$Sample
+ill <- pheno[pheno$Healthy=="no", ]$Sample
+
+## Extract the names of the ill samples
+
+t_res<- t.test(gen_counts[1,healthy], gen_counts[1,ill])
+
+t_res
+```
+
+Lets have a look at the output of the t_res object. First have a look at the object by using `str()` function.
+
+```{r}
+str(t_res)
+```
+
+We can extract desired output such as p value, means of groups etc. from this object by using `$` opertator.
+
+```{r}
+t_res$p.value
+```
+
+Try to extract confidence intervals from the same object.
+
+
+## Many t tests in one go.
+
+We can make use of R's apply function to perform t test on all genes in the data. 
+
+```{r, eval=FALSE}
+apply(gen_counts,1,function(x) t.test(x[healthy], x[ill]))
+```
+
+For nicer output lets try to access p-values.
+```{r, eval=FALSE}
+apply(gen_counts,1,function(x) t.test(x[healthy], x[ill])$p.value)
+```
+
+And confidence intervals by using follwoing code.
+
+```{r, eval=FALSE}
+apply(gen_counts,1,function(x) t.test(x[healthy], x[ill])$estimate[1])
+apply(gen_counts,1,function(x) t.test(x[healthy], x[ill])$estimate[2])
+
+```
+
+ **Can you extract group means?**
+
+
+## Linear regression
+
+Similar to t.test, one can also apply linear regression on a single gene. TAke a look at some examples on how to extract output from the models. use `?lm` and `methods(class="lm")` to know more about what you can extract from linear model fit.
+
+```{r, eval=TRUE}
+ # Outcome
+y<-pheno$Age
+
+# Model
+lm1<- lm(y~unlist(gen_counts[1,]))
+ 
+coef(lm1)
+summary(lm1)
+summary(lm1)$coefficients[,4]
+```
+
+Once you know the output well enough you can try to run `lm` on all genes and extract output.
+
+
+```{r}
+coefs <- t(apply(gen_counts,1,function(x) lm(y~x)$coef))
+
+li_mo <- apply(gen_counts,1,function(x) lm(y~x))
+
+li_mo_sum <- apply(gen_counts,1,function(x) summary(lm(y~x))$coefficients[,4])
+
+```
+
+
+## Logistic regression 
+
+If the outcome variable is categorical, one can use `glm()` function. We can learn more about this in the future sessions. Just as a teaser, try following.
+
+```{r}
+y1 <- factor(pheno$Sex)
+mylogit <- glm(y1 ~ y , family = "binomial")
+```
+
+
+ 
+
+
+
+

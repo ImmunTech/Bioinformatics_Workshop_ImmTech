@@ -1,0 +1,57 @@
+---
+title: "Basic statitics in R"
+subtitle: "A hands on introduction"
+author: "<b>Ashfaq Ali</b>"
+institute: "NBIS, SciLife lab, Lund University, Sweden"
+date: "(updated: `r Sys.Date()`)"
+output:
+  xaringan::moon_reader:
+    encoding: 'UTF-8'
+    self_contained: false
+    chakra: 'assets/remark-latest.min.js'
+    css: 'assets/presentation.css'
+    lib_dir: libs
+    nature:
+      ratio: '4:3'
+      highlightLanguage: r
+      highlightStyle: github
+      highlightLines: true
+      countIncrementalSlides: falsep
+      slideNumberFormat: "Bioinfo Workshops Immuntech 2019 • %current%/%total%"
+       
+---
+## Inteactive session
+
+ - Everyone (almost) will have to carry on
+ - If you are done, help others so we move forward (Use Red, Green Stickies)
+ - 
+---
+
+##Lecture and Tutorial Overview (Wednesday/Thursday)
+
+ - **A quick catchup from previous sessions**
+  - Data types: vectors, matrices and data frames
+  - Basic operations: R is a **Functional Language**, Get Help
+  - Data Import, Export, Generation
+  - Basic plots
+  
+ - **Descriptive statistics and basic data transformations**
+  - Summary statistics: Mean, Median, Varinace, Standard Deviation,
+    Quantiles, counts, log2, log10, Exponentials
+  - Subsetting and calculating
+  - Vectorized Operations
+ 
+ - **Two groups analyses T test `r t.test()`**
+  - T test `r t.test()`, paired and unpaired
+  - Many t tests
+  
+ - **Regressions Models. the `r lm()` and the `r glm()` functions.
+  - Multivariate statitics with `glm()`
+  - Many regressions
+
+ - Bonus 
+  - Interactions, anova and related plots
+
+
+---
+  
