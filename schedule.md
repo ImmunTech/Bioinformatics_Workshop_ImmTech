@@ -48,13 +48,11 @@ Lecture recordings are found at following links: [Part1](https://lu.box.com/s/7c
 
 Course organiser: Ashfaq Ali
 
-<span style="color:red"> **1500 to 1700:**</span>
+<span style="color:red"> **1300 to 1500:**</span>
 
 html file for the tutorial: [tutorial][15]
 
 R markdown file for the exercise: [R-markdown file][16]
-
-*Course materials will eventually be uploaded here*
 
 ##### Friday 2019-DEC-06
 
