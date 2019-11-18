@@ -93,6 +93,7 @@ str_vec <- c(str_var1, str_var2, str_var3)
 With the vector `n`, You can try do some of the basic statistics functions like `log()`, `mean()`, `max()` and so on as explained in the slides to get a hang of it!
 
 ![](/home/lokesh/Teaching/Bioinformatics_Workshop_ImmTech/Data/2019-10-15/figures_for_presentation/s14.png)
+
 ## String operations
 
 Here I will introduce some in-built functions to manipulate strings! Some of these functions can be very handy when you work with tables with different strings and you want to search/edit them!
@@ -137,8 +138,8 @@ tolower(str_var3)
 You can generally import a `csv` or `tsv` file into the R environment using `read.table` command. This would automatically create a datatype called `data.frame` that stores information from a matrix (like an excel sheet) in a structured way! 
 
 ```{r, eval=FALSE}
-gene_counts <- read.table("~/Documents/Teaching/Bioinfo_workshops/gene_counts.tsv", sep = "\t",row.names = 1, header = T)
-metadata <- read.table("~/Documents/Teaching/Bioinfo_workshops/metadata.tsv", sep = "\t", header = T)
+gene_counts <- read.table("gene_counts.tsv", sep = "\t",row.names = 1, header = T)
+metadata <- read.table("metadata.tsv", sep = "\t", header = T)
 
 ```
 
