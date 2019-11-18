@@ -1,19 +1,30 @@
 ---
 title: "Tutorial: Basic statistics in R"
-output: learnr::tutorial
-runtime: shiny_prerendered
+output:
+  bookdown::html_document2:
+          toc: true
+          toc_float: true
+          toc_depth: 4
+          number_sections: true
+          theme: flatly
+          highlight: tango
+          df_print: default
+          code_folding: "none"
+          self_contained: false
+          keep_md: false
+          encoding: 'UTF-8'
+          css: "assets/lab.css"
 ---
 
 
-```{r setup, include=FALSE}
-library(learnr)
-knitr::opts_chunk$set(echo = TRUE)
+```{r,child="assets/header-lab.Rmd"}
 ```
 
 
-## A quick catch up and practice for previous sessions
 
-### Data: Import, Export, Generation, vectors, matrices and data frames
+# A quick catch up and practice for previous sessions
+
+## Data: Import, Export, Generation, vectors, matrices and data frames
  
   
 For this session we will use Gene counts data from Lokesh given in the previous session. You can download the data here [genes](https://immuntech.github.io/Bioinformatics_Workshop_ImmTech/Data/2019-10-15/gene_counts.tsv) and [metadata](https://immuntech.github.io/Bioinformatics_Workshop_ImmTech/Data/2019-10-15/metadata.tsv).
@@ -30,13 +41,33 @@ pheno <- read.table("~/Documents/GitHub/Bioinformatics_Workshop_ImmTech/Data/201
 
 Have a look at the data by using `head()` function.
 
+First have look at the the gene expression data.
+
 ```{r, eval=TRUE}
 # To look at the top three lines of the file use head()
 head(gen_counts, 3)
+```
+
+And now the Phenotype data.
+
+```{r, eval=TRUE}
 head(pheno)
 ```
 
-Try the `str()`, `summary()`, `dim()` just like head and see what it gives you.
+
+It is good practice to keep the annotation is separate data structures. It is often the the one needs to make use of different sample annotations and row annotations for statistics and plotting purpose. Usually the numeric data such as gene expression values is kept in a matrix and all the annotations such as gene annotations and sample annotations are kept in data frames.We might want to recall that Matrix stores only one type of data such as numeric, strings etc. while data frames can hold different types of values.
+
+
+**On your own**
+
+*Try the `str()`, `summary()`, `dim()` and `class` functions and see if you can find out how many rows and columns each data has. Also find what other attributes you can understand using these functions*
+
+```{r,results='hide',block.title=TRUE,fig.height=5,fig.width=10}
+summary(pheno)
+str(gen_counts)
+class(gen_counts)
+class(pheno)
+```
 
 ```{r, eval=FALSE, include=FALSE}
 head(gen_counts==0)
@@ -44,7 +75,10 @@ head(gen_counts==0)
 
 ### Accessing parts of the data 
 
-**Using indices**
+R is a flexible language and it gives many different options to do the same thing. Something simple like accession certain rows of the data or columns of the can be done in many different ways. Lets look do it by using *positional indices mapping* or
+by using row or column *names*. 
+
+**Using positional indices**
 
 Accessing parts of the data in R can be done in different ways. Lets start by using `data[ , ]` to extract parts of the data. Use left side of the comma for rows and right side of the comma for columns. 
 
@@ -65,7 +99,7 @@ Lets create a vector of samples you are interested in. To extract the samples fr
 ## Create a vector of samples you are interested in
 samples <- c("Sample_13" , "Sample_9" , "Sample_4" , "Sample_14" , "Sample_12")
 
-## To extract the samples 
+## To extract the samples, here I am using indices for rows while names for columns.
 
 gen_counts[ 1:3, samples]
 
@@ -76,7 +110,17 @@ And similarly, to extract you favorite genes by names use following examples.
 ```{r, eval=TRUE}
 genes <- c("BMS1" , "SYNC" , "NFIB" , "RAB11FIP3" , "COG1" , "C5orf38" , "FAM126B" ,   "SUCLA2" , "SCN4A" , "CISD1"  )
 
-head(gen_counts[genes,],3)
+## To extract the rows, here I am using indices for rows while names for columns.
+
+head(gen_counts[genes,], 3)
+
+```
+
+**Extract names samples coming from healthy and ill individuals.
+
+```{r}
+healthy <- pheno[pheno$Healthy=="yes", ]$Sample
+ill <- pheno[pheno$Healthy=="no", ]$Sample
 
 ```
 
@@ -96,19 +140,14 @@ So far we have consolidated our knowledge on how to load, access, subset and sav
 
 
 
-## Functional programming
+# Functional programming
 
 R is a **Functional Language** and there is a lot of help available. For almost all necessary data analyses tasks, there are functions available. Most of these functions are well written and have good documentation on how to use them. Often R functions are bundled in packages. An example of a package is `ggplot2` that is developed for plotting purpose. There are plenty more such as `limma` for analyses of micro array data. There are handy functions to find out what these packages and functions do.
 We would take a look at how to get help on packages, functions and data types.
 
-To know more about packages, lets look at the Vignettes of ggplot2 package in R by using function call `browseVignettes("ggplot2")`.
+### Help on functions
 
-```{r, eval=FALSE}
-browseVignettes("ggplot2")
-```
-
-And to get help on `ggplot()` function lets use `?`. Or `t.test()` or `lm()`.
-
+***And to get help on `ggplot()` function lets use `?`. Or `t.test()` or `lm()`.***
 
 ```{r, eval=FALSE}
 ?ggplot
@@ -116,7 +155,17 @@ And to get help on `ggplot()` function lets use `?`. Or `t.test()` or `lm()`.
 ?lm
 ```
 
-If you want to know what methods are available for your type of data, you can use `methods` function as following. 
+### Help on R packages
+
+***To know more about packages, lets look at the Vignettes of ggplot2 package in R by using function call `browseVignettes("ggplot2")`.***
+
+```{r, eval=FALSE}
+browseVignettes("ggplot2")
+```
+
+### Help on data closeness.
+
+***If you want to know what methods are available for your type of data, you can use `methods` function as following.***
 
 ```{r, eval=FALSE}
 # For matrix class
@@ -126,29 +175,34 @@ methods(class = "matrix")
 methods(class = "data.frame")
 ```
 
+Essentially each function as a set of parameters you can give. Often the errors R produces is due to the fact that the user is not providing the correct data (arguments) for those parameters. Help pages will give an overview of the parameters available. Typically there are default values (arguments) for each parameter should be but the function wont work with some minimal arguments.
 
+# Descriptive statistics 
 
-## Descriptive statistics
+R is a statistical and programming language.There are thousands of packages and functions available for basic to very advanced statistics. In not, once can always write there own function to help themselves in their cause.
+
+## Some useful descriptive statistics
 
 There are several convenience functions and packages available for descriptive statistics and analyses in R. We will use some of these and try to apply them on our genes data.
 
 To get values such as mean, standard deviation, variance, min, max, median etc. R has implemented functions in the base package. This package is automatically loaded in R when you start the program R or Studio.
 
-Lets say we want obtain the mean of the fist sample we can use `rowMeans()` and `colMeans()` as following.
+Lets say we want obtain the mean of the fist sample we can use `rowMeans()` , `colMeans()`, `aggregate()` as following.
 
 ```{r}
 
 # means on selection of samples
-colMeans(gen_counts[,samples])
+colMeans(gen_counts[ , samples])
 
 # means of selection of rows and columns. 
 
-rowMeans(gen_counts[genes,samples])
+rowMeans(gen_counts[genes , samples])
 
 
 ```
 
 Similarly, we can apply the same other descriptive statistical functions such as `rowVars()` or `colVars()` for variances of rows and columns respectively.
+
 
  **Try to use `rowsd, rowMax, rowMin` etc. to get an idea of the functions available for descriptive statistics.**
 
@@ -156,19 +210,85 @@ If there is a particular function you are interested in, ask one of the TAs or b
 
  ***Mean, Median, Variance, Standard Deviation, Quantiles, counts, log2, log10, Exponential***
     
+## Applying functions on subset of the data
 
-## t test
+```{r}
+aggregate(Age~Sex,data = pheno, FUN = "mean")
+aggregate(Age~Sex,data = pheno, FUN = "sd")
 
- To apply `t.test()` in R we can first look at the help by typing `?t.test`
+```
+
+# Writing your own functions `apply()`*** family functions
+
+Writing function is relatively easy. Lets write a function to calculate ratio of means between healthy vs. ill individuals.
+
+## Writing your own functions
+
+We define `ratioOfMeans` by assigning it to the output of *function*. The list of *argument* names are contained within parentheses. Next, the *body* of the function–the statements that are executed when it runs–is contained within curly braces ({}). 
+
+
+
+```{r}
+# This functions has three parameters, names of group1 and names of group 2.
+ratioOfMeans <- function(data, group1, group2) {
+  mean1 <- rowMeans(data[ , group1])
+  mean2 <- rowMeans(data[ , group2])
+  ratio <- mean1/mean2
+  return(ratio)
+}
+```
+
+When we call the function, the values we pass to it are assigned to those variables so that we can use them inside the function. Inside the function, we use a return statement to send a result back to whoever asked for it. 
+
+Now we have written a function, we can use it to calculate ratios within our own data sets whenever we want.
+
+```{r}
+ratios <- ratioOfMeans(data = gen_counts, group1 = healthy, group2 = ill)
+```
+
+*** It is OK if you don't fully understand this, for typical data analyses one can usually rely on already available functions in R***. There is a lot of testing and annotation required before your function can be published for others to use. 
+This was just to illustrate the value of investing time in learning R. 
+
+## The ***`apply()`*** family functions
+
+R has a special class of helper functions that can be used to apply functions to all elements of any data type. These include `lapply()`, `sapply()`, `maapply()`, `tapply()`, `rapply()`. These are alternatives to loops and have faster implementation. It is recommended to use these instead of loops as they are much faster and rather easy to implement.
+
+Lets take a look at an example.
+
+```{r, results='hide'}
+# To calculate mean of rows use following
+apply(gen_counts, 1, mean)
+# To calculate mean of columns use following
+apply(gen_counts, 2, mean)
+```
+
+The above function should give you the exact same output as `rowMeans()` and `colMeans()` respectively.
+
+The `apply()` functions are particularly handy when you want to write small ***through away functions***. 
+
+We will use these in the upcoming session when we want to learn about t.test and linear models.
+
+***We will cover more advanced descriptive statistics in the future sessions.***
+
+# Basic Statistics 
+
+We will look at the two different statistical tests namely *t-test* and *linear regression* to test our hypotheses.
+
+## Student t-test
+
+To apply `t.test()` in R we can first look at the help by typing `?t.test`.
+We want to find out whether certain genes are deferentially expressed in healthy vs. ill patients using students t-test. 
+
 
 ```{r eval=TRUE}
-healthy <- pheno[pheno$Healthy=="yes", ]$Sample
-ill <- pheno[pheno$Healthy=="no", ]$Sample
-
 ## Extract the names of the ill samples
+healthy <- pheno[pheno$Healthy == "yes" , ]$Sample
+ill <- pheno[pheno$Healthy == "no", ]$Sample
 
-t_res<- t.test(gen_counts[1,healthy], gen_counts[1,ill])
+# Aplly t.test on gene at row 1 in the data.
+t_res<- t.test(gen_counts[1 , healthy], gen_counts[1 , ill])
 
+# Take a look at the resuls of the t test.
 t_res
 ```
 
@@ -184,7 +304,13 @@ We can extract desired output such as p value, means of groups etc. from this ob
 t_res$p.value
 ```
 
-Try to extract confidence intervals from the same object.
+Try to extract confidence intervals, means of groups and  from the same object.
+
+```{r}
+t_res$estimate[1]
+t_res$estimate[2]
+t_res$conf.int
+```
 
 
 ## Many t tests in one go.
@@ -192,15 +318,17 @@ Try to extract confidence intervals from the same object.
 We can make use of R's apply function to perform t test on all genes in the data. 
 
 ```{r, eval=FALSE}
-apply(gen_counts,1,function(x) t.test(x[healthy], x[ill]))
+apply(gen_counts , 1 , function(x) t.test(x[healthy], x[ill]))
 ```
 
+
 For nicer output lets try to access p-values.
+
 ```{r, eval=FALSE}
 apply(gen_counts,1,function(x) t.test(x[healthy], x[ill])$p.value)
 ```
 
-And confidence intervals by using following code.
+And means by using following code.
 
 ```{r, eval=FALSE}
 apply(gen_counts,1,function(x) t.test(x[healthy], x[ill])$estimate[1])
@@ -208,27 +336,68 @@ apply(gen_counts,1,function(x) t.test(x[healthy], x[ill])$estimate[2])
 
 ```
 
- **Can you extract group means?**
+**Can you extract confidence intervals?**
+ 
 
 
 ## Linear regression
 
 Similar to t.test, one can also apply linear regression on a single gene. Take a look at some examples on how to extract output from the models. use `?lm` and `methods(class="lm")` to know more about what you can extract from linear model fit.
 
+One should be aware the `formula` argument of the function and it works such that the outcome variable is on the left hand side of the "`~`" sign and the predictor variables are on the right hand side.
+
 ```{r, eval=TRUE}
  # Outcome
 y<-pheno$Age
 
 # Model
-lm1<- lm(y~unlist(gen_counts[1,]))
- 
+lm1<- lm( formula = y ~ gen_counts[1,])
+```
+
+To look at the results from the linear model `summary()` is a very useful function and it gives most of the output needed for interpretation of results.
+
+
+To find out what other functions you can apply to linear model output use two of our favorite functions `class()` and `methods()`.
+
+```{r}
+# to find out which class of object lm1 is use following
+class(lm1)
+```
+
+```{r}
+# To find out which methods are availabe for this class
+
+methods(class = "lm")
+```
+
+And lets use some of functions available for class "lm" to extract useful output.
+
+```{r}
 coef(lm1)
 summary(lm1)
 summary(lm1)$coefficients[,4]
 ```
 
-Once you know the output well enough you can try to run `lm` on all genes and extract output.
 
+## Many Linear regression
+Just like we did for t-test, we would like to run linear regression for all our genes and extract output in a nice format.
+
+
+
+
+```{r,results='hide'}
+apply(gen_counts,1,function(x) lm(y~x))
+```
+
+Store this output in a list and have a look at the summary of results fro the first gene.
+
+```{r}
+
+lms <- apply(gen_counts,1,function(x) lm(y~x))
+summary(lms[[1]])
+```
+
+Once you know the output well enough you can try to run `lm` on all genes and extract output.
 
 ```{r}
 coefs <- t(apply(gen_counts,1,function(x) lm(y~x)$coef))
@@ -249,6 +418,8 @@ y1 <- factor(pheno$Sex)
 mylogit <- glm(y1 ~ y , family = "binomial")
 ```
 
+## Multiple testing
+Be aware of multiple testing. We will cover that in the future sessions.
 
  
 
