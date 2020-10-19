@@ -137,6 +137,9 @@ tolower(str_var3)
 
 You can generally import a `csv` or `tsv` file into the R environment using `read.table` command. This would automatically create a datatype called `data.frame` that stores information from a matrix (like an excel sheet) in a structured way! 
 
+You can download the files here:
+[genes](https://immuntech.github.io/Bioinformatics_Workshop_ImmTech/Data/2019-10-15/gene_counts.tsv) and [metadata](https://immuntech.github.io/Bioinformatics_Workshop_ImmTech/Data/2019-10-15/metadata.tsv).
+
 ```{r, eval=FALSE}
 gene_counts <- read.table("gene_counts.tsv", sep = "\t",row.names = 1, header = T)
 metadata <- read.table("metadata.tsv", sep = "\t", header = T)
