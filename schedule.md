@@ -54,14 +54,6 @@ html file for the tutorial: [tutorial][15]
 
 R markdown file for the exercise: [R-markdown file][16]
 
-##### Friday 2019-DEC-06
-
-###### <span style="color:blue"> *To Be Decided* at **Bioforum**</span>
-
-Course organiser: *To Be Decided*
-
-<span style="color:red"> **1300 to 1500:**</span>
-
 
 [1]: Data/2019-09-20/Introduction_workshop/Introduction_xaringan.html
 [2]: Data/2019-09-20/Introduction_workshop/Exercises.html
